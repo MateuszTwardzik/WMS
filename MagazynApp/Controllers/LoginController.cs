@@ -73,25 +73,26 @@ namespace MagazynApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(User user)
         {
-            // if (ModelState.IsValid)
-            //  {
-            //var f_password = userPassword;
-            //var data = _db.Users.Where(s => s.Email.Equals(email) && s.Password.Equals(f_password)).ToList();
-            var data = await _context.User.FirstOrDefaultAsync(s => s.Name.Equals(user.Name) && s.Password.Equals(user.Password));
-            if (data != null)
+            if (ModelState.IsValid)
             {
-                HttpContext.Session.SetString("Name", data.Name);
-                HttpContext.Session.SetInt32("userId", data.Id);
-                return RedirectToAction("Index");
+                //var f_password = userPassword;
+                //var data = _db.Users.Where(s => s.Email.Equals(email) && s.Password.Equals(f_password)).ToList();
+                var data = await _context.User.FirstOrDefaultAsync(s => s.Name.Equals(user.Name) && s.Password.Equals(user.Password));
+
+                if (data != null)
+                {
+                    HttpContext.Session.SetString("Name", data.Name);
+                    HttpContext.Session.SetInt32("userId", data.Id);
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ViewBag.error = "Login failed";
+                    TempData["Message"] = "Login failed";
+                    return RedirectToAction("Login");
+                }
             }
-            else
-            {
-                ViewBag.error = "Login failed";
-                TempData["Message"] = "Login failed";
-                return RedirectToAction("Login");
-            }
-            //  }
-            // return View();
+            return View();
         }
 
         public async Task<IActionResult> Logout()

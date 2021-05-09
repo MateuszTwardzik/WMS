@@ -35,7 +35,7 @@ namespace MagazynApp.Controllers
             }
 
             var product = await _context.Product
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);          
             if (product == null)
             {
                 return NotFound();
@@ -57,8 +57,14 @@ namespace MagazynApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Quantity,Price")] Product product)
         {
+
             if (ModelState.IsValid)
             {
+                //product.Id = _context.User.LastOrDefaultAsync().Id + 1;
+                //ctx.Customers.OrderBy(e => e.Purchases.FirstOrDefault().DateTime);
+                // Product lproduct = await _context.Product.LastOrDefaultAsync();
+                int maxId = _context.Product.Count();
+                product.Id = maxId + 1;
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
