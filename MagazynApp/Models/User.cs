@@ -13,7 +13,7 @@ namespace MagazynApp.Models
         public int Permission { get; set; }
 
 
-      //  public ICollection<Enrollment> Enrollments { get; set; }
+        //  public ICollection<Enrollment> Enrollments { get; set; }
 
 
     }

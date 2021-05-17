@@ -7,23 +7,43 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MagazynApp.Data;
 using MagazynApp.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace MagazynApp.Controllers
 {
     public class ProductsController : Controller
     {
-       // private readonly IDataAccessProvider _dataAccessProvider;
+        // private readonly IDataAccessProvider _dataAccessProvider;
         private readonly MagazynContext _context;
 
-        public ProductsController(MagazynContext context) 
+        public ProductsController(MagazynContext context)
         {
             _context = context;
         }
+        [HttpPost]
+        public string Index(string searchString, bool notUsed)
+        {
+            return "From [HttpPost]Index: filter on " + searchString;
+        }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Product.ToListAsync());
+            if (HttpContext.Session.GetInt32("userId") != null)
+            {
+                var products = from p in _context.Product
+                               select p;
+
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    products = products.Where(p => p.Name.Contains(searchString));
+                }
+                return View(await products.ToListAsync());
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
 
         // GET: Products/Details/5
@@ -35,7 +55,7 @@ namespace MagazynApp.Controllers
             }
 
             var product = await _context.Product
-                .FirstOrDefaultAsync(m => m.Id == id);          
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
                 return NotFound();
@@ -47,8 +67,17 @@ namespace MagazynApp.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            return View();
+            if (HttpContext.Session.GetInt32("userId") != null)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+            //return View();
         }
+
 
         // POST: Products/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -57,14 +86,8 @@ namespace MagazynApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Quantity,Price")] Product product)
         {
-
             if (ModelState.IsValid)
             {
-                //product.Id = _context.User.LastOrDefaultAsync().Id + 1;
-                //ctx.Customers.OrderBy(e => e.Purchases.FirstOrDefault().DateTime);
-                // Product lproduct = await _context.Product.LastOrDefaultAsync();
-                int maxId = _context.Product.Count();
-                product.Id = maxId + 1;
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

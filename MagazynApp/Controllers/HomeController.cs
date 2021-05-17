@@ -20,6 +20,7 @@ namespace MagazynApp.Controllers
 
         public IActionResult Index()
         {
+            
             return View();
         }
   

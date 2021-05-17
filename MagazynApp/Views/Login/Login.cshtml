@@ -1,34 +1,48 @@
-﻿@model MagazynApp.Models.User
-@{
-    // ViewData["Title"] = "Login";
-    ViewBag.Title = "Login";
+﻿@{
+    Layout = null;
 }
+@model MagazynApp.Models.User
+<!DOCTYPE html>
 
-<div class="row justify-content-md-center">
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                Login
-            </div>
-            <div class="card-body">
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link href="~/css/LoginStyle.css" rel="stylesheet" type="text/css" />
+    <script src="~/js/test.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+</head>
+<body>
+
+    <div class="sidenav">
+        <div class="login-main-text">
+            <h2>Aplikacja do obsługi magazynu</h2>
+            <p>Zaloguj sie aby uzyskać dostęp.</p>
+        </div>
+    </div>
+    <div class="main">
+        <div class="col-md-6 col-sm-12">
+            <div class="login-form">
                 @using (Html.BeginForm("Login", "Login", FormMethod.Post))
                 {
                     @Html.AntiForgeryToken()
                     <div class="form-group">
                         @Html.LabelFor(m => m.Name)
                         @Html.TextBoxFor(m => m.Name, "", new { @class = "form-control", @placeholder = "Name" })
-
                     </div>
                     <div class="form-group">
                         @Html.LabelFor(m => m.Password)
                         @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Password" })
                     </div>
                     <div class="form-group">
-                        <input type="submit" name="submit" class="btn btn-primary" value="Login" />
+                        <input type="submit" name="submit" class="btn btn-black" value="Login" />
                     </div>
-                    <h3><strong>@TempData["Message"]</strong></h3>
                 }
             </div>
         </div>
     </div>
-</div>
+
+</body>
+</html>

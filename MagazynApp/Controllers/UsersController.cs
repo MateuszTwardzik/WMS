@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MagazynApp.Data;
 using MagazynApp.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace MagazynApp.Controllers
 {
@@ -149,5 +150,6 @@ namespace MagazynApp.Controllers
         {
             return _context.User.Any(e => e.Id == id);
         }
+
     }
 }

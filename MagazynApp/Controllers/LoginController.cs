@@ -14,15 +14,10 @@ namespace MagazynApp.Controllers
     public class LoginController : Controller
     {
         private readonly MagazynContext _context;
-        // private readonly UserManager<IdentityUser> userManager;
-        //private readonly SignInManager<IdentityUser> signInManager;
 
         public LoginController(MagazynContext context)
-        // UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
             _context = context;
-            // this.userManager = userManager;
-            //this.signInManager = signInManager;
         }
 
         //GET : User
@@ -45,30 +40,6 @@ namespace MagazynApp.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        /*
-        public async Task<IActionResult> Login(User model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = new IdentityUser{UserName = model.Name};
-
-                //var data = _db.Users.Where(s => s.Email.Equals(email) && s.Password.Equals(f_password)).ToList();
-                // var data = await _context.User.FirstOrDefaultAsync(s => s.Name.Equals(userName) && s.Password.Equals(userPassword));
-                var result = await signInManager.PasswordSignInAsync(model.Name, model.Password, false, false);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    return RedirectToAction("Login");
-                }
-                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
-            }
-            return View(model);
-        }*/
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(User user)
@@ -83,7 +54,8 @@ namespace MagazynApp.Controllers
                 {
                     HttpContext.Session.SetString("Name", data.Name);
                     HttpContext.Session.SetInt32("userId", data.Id);
-                    return RedirectToAction("Index");
+                    HttpContext.Session.SetInt32("userPermission", data.Permission);
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                 {
@@ -95,10 +67,12 @@ namespace MagazynApp.Controllers
             return View();
         }
 
+        [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Login");
+                HttpContext.Session.Clear();
+                return RedirectToAction("Login");
         }
+
     }
 }
