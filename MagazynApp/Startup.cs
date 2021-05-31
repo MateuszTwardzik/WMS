@@ -28,7 +28,8 @@ namespace MagazynApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+
+                services.AddControllersWithViews();
             services.AddDbContext<MagazynContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             //  services.AddScoped<IDataAccessProvider, DataAccessProvider>();
@@ -42,7 +43,9 @@ namespace MagazynApp
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
+
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -8,7 +8,6 @@ using MagazynApp.Models;
 using MagazynApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 namespace MagazynApp.Controllers
 {
     public class LoginController : Controller
@@ -60,7 +59,7 @@ namespace MagazynApp.Controllers
                 else
                 {
                     ViewBag.error = "Login failed";
-                    TempData["Message"] = "Login failed";
+                    TempData["Message"] = "Podałeś nieprawidłowe dane!";
                     return RedirectToAction("Login");
                 }
             }

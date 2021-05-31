@@ -9,12 +9,12 @@
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
     <link href="~/css/LoginStyle.css" rel="stylesheet" type="text/css" />
-    <script src="~/js/test.js"></script>
+    <script src="~/js/site.js"></script>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 </head>
-<body>
+<body style="background-color:lightgray">
 
     <div class="sidenav">
         <div class="login-main-text">
@@ -28,17 +28,18 @@
                 @using (Html.BeginForm("Login", "Login", FormMethod.Post))
                 {
                     @Html.AntiForgeryToken()
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.Name)
-                        @Html.TextBoxFor(m => m.Name, "", new { @class = "form-control", @placeholder = "Name" })
+                    <div class="form-group" id="text">
+                        @*@Html.LabelFor(m => m.Name)*@
+                        @Html.TextBoxFor(m => m.Name, "", new { @class = "form-control", @placeholder = "Name", id = "logintext" })
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(m => m.Password)
-                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Password" })
+                        @*@Html.LabelFor(m => m.Password)*@
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Password", id = "logintext" })
                     </div>
                     <div class="form-group">
-                        <input type="submit" name="submit" class="btn btn-black" value="Login" />
-                    </div>
+                        <input type="submit" name="submit" class="btn-login" value="Login" />                        
+                    </div> 
+                    <div style="margin-left: 250px">@TempData["Message"]</div>
                 }
             </div>
         </div>

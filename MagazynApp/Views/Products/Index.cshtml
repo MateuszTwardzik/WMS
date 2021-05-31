@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MagazynApp.Models.Product>
+﻿@model PaginatedList<MagazynApp.Models.Product>
 
 @{
     ViewData["Title"] = "Index";
@@ -18,9 +18,9 @@
 </p>
 
 <form asp-controller="Products" asp-action="Index" method="get">
-    <p>
-        Title: <input type="text" name="searchString" />
-        <input type="submit" value="Filter" />
+    <p style="font-size:16px">
+        Znajdz po nazwie: <input id="text-black" type="text" name="searchString" />
+        <input class="btn-black" style="position:absolute; margin-left: 20px; margin-top: -5px;" type="submit" value="Filtruj" />
     </p>
 </form>
 
@@ -32,13 +32,13 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Nazwa</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Quantity)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Ilosc</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Cena</a>
             </th>
             <th></th>
         </tr>
@@ -65,3 +65,35 @@
         }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+
+<div id="container">
+    <div id="left">
+        <a asp-action="Index"
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-pageNumber="@(Model.PageIndex - 1)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="btn btn-default @prevDisabled">
+            Previous
+        </a>
+    </div>
+
+    <div style="position:absolute; bottom:8px" id="center">@(Model.PageIndex) - @(Model.TotalPages)</div>
+
+    <div id="right">
+        <a asp-action="Index"
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-pageNumber="@(Model.PageIndex + 1)"
+           asp-route-currentFilter="@ViewData["CurrentFilter"]"
+           class="btn btn-default @nextDisabled">
+            Next
+        </a>
+    </div>
+</div>
+@*<div style="position:absolute; right: 26%; bottom: 8%">
+    </div>*@

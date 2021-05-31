@@ -28,7 +28,7 @@ namespace MagazynApp.Data
 
             var products = new Product[]
             {
-                new Product{Name="Cos", Quantity=1,Price=4}
+               // new Product{Name="Cos", Quantity=1,Price=4}
             };
             foreach(Product p in products)
             {
