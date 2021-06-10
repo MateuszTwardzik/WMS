@@ -27,13 +27,12 @@ namespace MagazynApp.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index(string searchString, int? pageNumber, string currentFilter, string sortOrder)
+        public async Task<IActionResult> Index(string searchString, int? pageNumber, string currentFilter, string sortOrder, string setPageSize,int pageSize)
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["QuantitySortParm"] = sortOrder == "quantity" ? "quantity_desc" : "quantity";
             ViewData["PriceSortParm"] = sortOrder == "price" ? "price_desc" : "price";
             ViewData["CurrentFilter"] = searchString;
-
             if (HttpContext.Session.GetInt32("userId") != null)
             {
                 var products = from p in _context.Product
@@ -73,7 +72,11 @@ namespace MagazynApp.Controllers
                 {
                     products = products.Where(p => p.Name.ToUpper().Contains(searchString.ToUpper()));
                 }
-                int pageSize = 15;
+
+                if (pageSize == 0)
+                {
+                    pageSize = 10;
+                }
                 return View(await PaginatedList<Product>.CreateAsyc(products.AsNoTracking(), pageNumber ?? 1, pageSize));
                 //return View(await products.ToListAsync());
             }
