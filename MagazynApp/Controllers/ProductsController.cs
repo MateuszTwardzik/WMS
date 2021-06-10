@@ -27,7 +27,7 @@ namespace MagazynApp.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index(string searchString, int? pageNumber, string currentFilter, string sortOrder, string setPageSize,int pageSize)
+        public async Task<IActionResult> Index(string searchString, int? pageNumber, string currentFilter, string sortOrder, int pageSize, string setPageSize)
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["QuantitySortParm"] = sortOrder == "quantity" ? "quantity_desc" : "quantity";
@@ -37,6 +37,7 @@ namespace MagazynApp.Controllers
             {
                 var products = from p in _context.Product
                                select p;
+
 
                 switch (sortOrder)
                 {
@@ -60,6 +61,22 @@ namespace MagazynApp.Controllers
                         break;
                 }
 
+                switch (setPageSize)
+                {
+                    case "set10":
+                        HttpContext.Session.SetInt32("pagesize", 10);
+                        break;
+                    case "set20":
+                        HttpContext.Session.SetInt32("pagesize", 20);
+                        break;
+                    case "set100":
+                        HttpContext.Session.SetInt32("pagesize", 100);
+                        break;
+                    case "setAll":
+                        HttpContext.Session.SetInt32("pagesize", products.Count());
+                        break;
+                }
+
                 if (searchString != null)
                 {
                     pageNumber = 1;
@@ -73,10 +90,13 @@ namespace MagazynApp.Controllers
                     products = products.Where(p => p.Name.ToUpper().Contains(searchString.ToUpper()));
                 }
 
-                if (pageSize == 0)
+
+                if (HttpContext.Session.GetInt32("pagesize").HasValue)
                 {
-                    pageSize = 10;
+                    pageSize = HttpContext.Session.GetInt32("pagesize").GetValueOrDefault();
                 }
+                else pageSize = 10;
+
                 return View(await PaginatedList<Product>.CreateAsyc(products.AsNoTracking(), pageNumber ?? 1, pageSize));
                 //return View(await products.ToListAsync());
             }

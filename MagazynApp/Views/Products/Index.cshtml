@@ -14,16 +14,17 @@
 </h1>
 
 <p>
-    <a asp-action="Create">Dodaj nowy produkt</a>
+    <a class="btn-smallblack" style="width:450px" asp-action="Create">Dodaj nowy produkt</a>
+    @*<a style="color: black" asp-action="Create">Dodaj nowy produkt</a>*@
     <h3>@TempData["Message"]</h3>
 </p>
 <div>
     <p>
         Wybierz ilość elementów:
-        <a asp-controller="Products" asp-action="Index" asp-route-pageSize="10">10</a>
-        <a asp-controller="Products" asp-action="Index" asp-route-pageSize="20">20</a>
-        <a asp-controller="Products" asp-action="Index" asp-route-pageSize="100">100</a>
-        <a asp-controller="Products" asp-action="Index" asp-route-pageSize="9999999">Wszystkie</a>
+        <a class="btn-smallblack"  asp-controller="Products" asp-action="Index" asp-route-setPageSize="set10">10</a>
+        <a class="btn-smallblack"  asp-controller="Products" asp-action="Index" asp-route-setPageSize="set20">20</a>
+        <a class="btn-smallblack" asp-controller="Products" asp-action="Index" asp-route-setPageSize="set100">100</a>
+        <a class="btn-smallblack"  asp-controller="Products" asp-action="Index" asp-route-setPageSize="setAll">Wszystkie</a>
     </p>
 </div>
 
@@ -41,13 +42,13 @@
     <thead>
         <tr>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Nazwa</a>
+                <a style="color: black" asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Nazwa</a>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Ilosc</a>
+                <a style="color: black" asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Ilosc</a>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Cena</a>
+                <a style="color: black" asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Cena</a>
             </th>
             <th></th>
         </tr>
@@ -66,9 +67,9 @@
                     @Html.DisplayFor(modelItem => item.Price)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edytuj</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Szczegóły</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Usuń</a>
+                    <a style="color: black" asp-action="Edit" asp-route-id="@item.Id">Edytuj</a> |
+                    <a style="color: black" asp-action="Details" asp-route-id="@item.Id">Szczegóły</a> |
+                    <a style="color: black" asp-action="Delete" asp-route-id="@item.Id">Usuń</a>
                 </td>
             </tr>
         }
