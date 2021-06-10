@@ -5,7 +5,7 @@
 }
 
 @{
-    Layout = "_Layout";
+    Layout = "Product_Layout";
 }
 
 <h1>
@@ -71,8 +71,7 @@
     var nextDisabled = !Model.HasNextPage ? "disabled" : "";
 }
 
-
-<div id="container">
+@*<div id="container">
     <div id="left">
         <a asp-action="Index"
            asp-route-sortOrder="@ViewData["CurrentSort"]"
@@ -94,6 +93,6 @@
             Next
         </a>
     </div>
-</div>
+</div>*@
 @*<div style="position:absolute; right: 26%; bottom: 8%">
     </div>*@

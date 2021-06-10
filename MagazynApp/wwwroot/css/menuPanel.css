@@ -123,12 +123,12 @@
 }
 
 .footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
     white-space: nowrap;
     line-height: 60px; /* Vertically center the text there */
-    margin-left: 50px;
+    margin-left: 250px;
 }
 
 #Logout {
@@ -150,29 +150,13 @@
     }
 
 #container {
-    position: absolute;
-    right: 55px;
-    bottom: 65px;
+    display: flex;
+    justify-content: space-around;
     width: 15%;
     text-align: center;
+    align-items: center;
 }
 
-#left {
-    float: left;
-    /*margin-left: 65px;*/
-    width: 30px;
-}
-
-#center {
-    display: inline-block;
-    margin: 0 auto;
-    width: 50px;
-}
-
-#right {
-    float: right;
-    width: 50px;
-}
 
 .btn-black {
     width: 95px;

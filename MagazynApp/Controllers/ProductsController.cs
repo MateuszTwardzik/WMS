@@ -42,7 +42,7 @@ namespace MagazynApp.Controllers
                 switch (sortOrder)
                 {
                     case "name_desc":
-                        products = products.OrderByDescending(p => p.Name);
+                        products = products.OrderBy(p => p.Name);
                         break;
                     case "quantity":
                         products = products.OrderBy(p => p.Quantity);
@@ -73,7 +73,7 @@ namespace MagazynApp.Controllers
                 {
                     products = products.Where(p => p.Name.ToUpper().Contains(searchString.ToUpper()));
                 }
-                int pageSize = 10;
+                int pageSize = 15;
                 return View(await PaginatedList<Product>.CreateAsyc(products.AsNoTracking(), pageNumber ?? 1, pageSize));
                 //return View(await products.ToListAsync());
             }
