@@ -11,12 +11,12 @@
 
 <h1>
     Produkty
+    @TempData["Message"]
 </h1>
 
 <p>
     <a class="btn-smallblack" style="width:450px" asp-action="Create">Dodaj nowy produkt</a>
     @*<a style="color: black" asp-action="Create">Dodaj nowy produkt</a>*@
-    <h3>@TempData["Message"]</h3>
 </p>
 <div>
     <p>
@@ -27,7 +27,6 @@
         <a class="btn-smallblack"  asp-controller="Products" asp-action="Index" asp-route-setPageSize="setAll">Wszystkie</a>
     </p>
 </div>
-
 <form asp-controller="Products" asp-action="Index" method="get">
     <p style="font-size:16px">
         Znajdz po nazwie: <input id="text-black" type="text" name="searchString" />
@@ -42,7 +41,7 @@
     <thead>
         <tr>
             <th>
-                <a style="color: black" asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Nazwa</a>
+                <a style="color: black" asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]"  asp-route-currentFilter="@ViewData["CurrentFilter"]">Nazwa</a>
             </th>
             <th>
                 <a style="color: black" asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Ilosc</a>

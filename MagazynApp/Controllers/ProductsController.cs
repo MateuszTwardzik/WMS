@@ -27,9 +27,10 @@ namespace MagazynApp.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index(string searchString, int? pageNumber, string currentFilter, string sortOrder, int pageSize, string setPageSize)
+        public async Task<IActionResult> Index(string searchString, int? pageNumber, string currentFilter,
+            string sortOrder, int pageSize, string setPageSize)
         {
-            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["NameSortParm"] = sortOrder == "name" ? "name_desc" : "name";
             ViewData["QuantitySortParm"] = sortOrder == "quantity" ? "quantity_desc" : "quantity";
             ViewData["PriceSortParm"] = sortOrder == "price" ? "price_desc" : "price";
             ViewData["CurrentFilter"] = searchString;
@@ -38,17 +39,25 @@ namespace MagazynApp.Controllers
                 var products = from p in _context.Product
                                select p;
 
+                if(sortOrder != null)
+                {
+                    HttpContext.Session.SetString("sort", sortOrder);
+                }
+                sortOrder = HttpContext.Session.GetString("sort");
 
                 switch (sortOrder)
                 {
-                    case "name_desc":
+                    case "name":
                         products = products.OrderBy(p => p.Name);
+                        break;
+                    case "name_desc":
+                        products = products.OrderByDescending(p => p.Name);
                         break;
                     case "quantity":
                         products = products.OrderBy(p => p.Quantity);
                         break;
                     case "quantity_desc":
-                        products = products.OrderBy(p => p.Quantity);
+                        products = products.OrderByDescending(p => p.Quantity);
                         break;
                     case "price":
                         products = products.OrderBy(p => p.Price);
@@ -57,7 +66,7 @@ namespace MagazynApp.Controllers
                         products = products.OrderByDescending(p => p.Price);
                         break;
                     default:
-                        products = products.OrderByDescending(p => p.Name);
+                        products = products.OrderBy(p => p.Name);
                         break;
                 }
 
@@ -98,7 +107,6 @@ namespace MagazynApp.Controllers
                 else pageSize = 10;
 
                 return View(await PaginatedList<Product>.CreateAsyc(products.AsNoTracking(), pageNumber ?? 1, pageSize));
-                //return View(await products.ToListAsync());
             }
             else
             {
