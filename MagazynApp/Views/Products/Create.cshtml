@@ -27,6 +27,16 @@
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
+
+            <div class="form-group">
+                <label for="TypeId">Wybierz rodzaj produktu:</label>
+                <select name="TypeId" id="TypeId">
+                    @foreach (var t in ViewData["productTypes"] as IList<ProductType>)
+                    {
+                        <option value="@t.Id">@t.Name</option>
+                    }
+                </select>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

@@ -45,8 +45,6 @@ namespace MagazynApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                //var f_password = userPassword;
-                //var data = _db.Users.Where(s => s.Email.Equals(email) && s.Password.Equals(f_password)).ToList();
                 var data = await _context.User.FirstOrDefaultAsync(s => s.Name.Equals(user.Name) && s.Password.Equals(user.Password));
 
                 if (data != null)

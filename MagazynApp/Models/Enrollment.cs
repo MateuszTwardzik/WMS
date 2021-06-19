@@ -7,10 +7,11 @@ namespace MagazynApp.Models
 {
     public class Enrollment
     {
-        public int EnrollmentId { get; set; }
-        public int UserId { get; set; }
+        public int EnrollmentID { get; set; }
         public int ProductID { get; set; }
-        public User User { get; set; }
+        public int Product_TypeID { get; set; }
+
         public Product Product { get; set; }
+        public ProductType Type { get; set; }
     }
 }

@@ -13,7 +13,6 @@ namespace MagazynApp.Controllers
 {
     public class ProductsController : Controller
     {
-        // private readonly IDataAccessProvider _dataAccessProvider;
         private readonly MagazynContext _context;
 
         public ProductsController(MagazynContext context)
@@ -36,10 +35,14 @@ namespace MagazynApp.Controllers
             ViewData["CurrentFilter"] = searchString;
             if (HttpContext.Session.GetInt32("userId") != null)
             {
-                var products = from p in _context.Product
-                               select p;
+                //var products = from p in _context.Product
+                //               select p;
 
-                if(sortOrder != null)
+                var products = _context.Product
+                               .Include(p => p.Type)
+                               .AsNoTracking();
+
+                if (sortOrder != null)
                 {
                     HttpContext.Session.SetString("sort", sortOrder);
                 }
@@ -123,11 +126,11 @@ namespace MagazynApp.Controllers
             }
 
             var product = await _context.Product
+                .Include(t => t.Type)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+
+            if (product == null)            
+                return NotFound();            
 
             return View(product);
         }
@@ -137,6 +140,17 @@ namespace MagazynApp.Controllers
         {
             if (HttpContext.Session.GetInt32("userId") != null)
             {
+                var types = _context.ProductType;
+
+                IList<ProductType> typeList = new List<ProductType>();
+
+                foreach(var t in types)
+                {
+                    typeList.Add(t);
+                }
+
+                ViewData["productTypes"] = typeList;
+
                 return View();
             }
             else
@@ -152,10 +166,9 @@ namespace MagazynApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Quantity,Price")] Product product)
+        public async Task<IActionResult> Create([Bind("Name,Quantity,Price,TypeId")] Product product)
         //[Bind("Id,Name,Quantity,Price")] 
         {
-
             if (ModelState.IsValid)
             {
                 _context.Add(product);
@@ -175,6 +188,17 @@ namespace MagazynApp.Controllers
             }
 
             var product = await _context.Product.FindAsync(id);
+
+            var types = _context.ProductType;
+
+            IList<ProductType> typeList = new List<ProductType>();
+
+            foreach (var t in types)
+            {
+                typeList.Add(t);
+            }
+
+            ViewData["productTypes"] = typeList;
             if (product == null)
             {
                 return NotFound();
@@ -187,7 +211,7 @@ namespace MagazynApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Quantity,Price")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Quantity,Price,TypeId")] Product product)
         {
             if (id != product.Id)
             {
