@@ -30,6 +30,7 @@ namespace MagazynApp.Controllers
             string sortOrder, int pageSize, string setPageSize)
         {
             ViewData["NameSortParm"] = sortOrder == "name" ? "name_desc" : "name";
+            ViewData["TypeSortParm"] = sortOrder == "type" ? "type_desc" : "type";
             ViewData["QuantitySortParm"] = sortOrder == "quantity" ? "quantity_desc" : "quantity";
             ViewData["PriceSortParm"] = sortOrder == "price" ? "price_desc" : "price";
             ViewData["CurrentFilter"] = searchString;
@@ -67,6 +68,12 @@ namespace MagazynApp.Controllers
                         break;
                     case "price_desc":
                         products = products.OrderByDescending(p => p.Price);
+                        break;
+                    case "type":
+                        products = products.OrderBy(p => p.Type.Name);
+                        break;
+                    case "type_desc":
+                        products = products.OrderByDescending(p => p.Type.Name);
                         break;
                     default:
                         products = products.OrderBy(p => p.Name);
@@ -129,8 +136,8 @@ namespace MagazynApp.Controllers
                 .Include(t => t.Type)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (product == null)            
-                return NotFound();            
+            if (product == null)
+                return NotFound();
 
             return View(product);
         }
@@ -144,7 +151,7 @@ namespace MagazynApp.Controllers
 
                 IList<ProductType> typeList = new List<ProductType>();
 
-                foreach(var t in types)
+                foreach (var t in types)
                 {
                     typeList.Add(t);
                 }
