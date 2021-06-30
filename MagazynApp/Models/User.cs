@@ -12,9 +12,5 @@ namespace MagazynApp.Models
         public string Password { get; set; }
         public int Permission { get; set; }
 
-
-        //  public ICollection<Enrollment> Enrollments { get; set; }
-
-
     }
 }

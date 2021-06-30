@@ -36,9 +36,6 @@ namespace MagazynApp.Controllers
             ViewData["CurrentFilter"] = searchString;
             if (HttpContext.Session.GetInt32("userId") != null)
             {
-                //var products = from p in _context.Product
-                //               select p;
-
                 var products = _context.Product
                                .Include(p => p.Type)
                                .AsNoTracking();
@@ -164,7 +161,6 @@ namespace MagazynApp.Controllers
             {
                 return RedirectToAction("Login", "Login");
             }
-            //return View();
         }
 
 

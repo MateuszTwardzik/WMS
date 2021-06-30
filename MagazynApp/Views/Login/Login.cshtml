@@ -29,11 +29,9 @@
                 {
                     @Html.AntiForgeryToken()
                     <div class="form-group" id="text">
-                        @*@Html.LabelFor(m => m.Name)*@
                         @Html.TextBoxFor(m => m.Name, "", new { @class = "form-control", @placeholder = "Name", id = "logintext" })
                     </div>
                     <div class="form-group">
-                        @*@Html.LabelFor(m => m.Password)*@
                         @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Password", id = "logintext" })
                     </div>
                     <div class="form-group">

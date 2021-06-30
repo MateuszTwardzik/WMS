@@ -67,8 +67,8 @@ namespace MagazynApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-                HttpContext.Session.Clear();
-                return RedirectToAction("Login");
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
         }
 
     }
