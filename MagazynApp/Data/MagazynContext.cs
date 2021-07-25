@@ -10,9 +10,14 @@ namespace MagazynApp.Data
 
         }
         public DbSet<User> User{ get; set; }
+        public DbSet<Client> Client { get; set; }
         public DbSet<Product> Product { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<ProductType> ProductType { get; set; }
+        public DbSet<Order> Order { get; set; }
+        public DbSet<OrderDetail> OrderDetail { get; set; }
+        public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
+        public DbSet<ShoppingCart> ShoppingCart { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -20,6 +25,11 @@ namespace MagazynApp.Data
             modelBuilder.Entity<User>().HasKey(x => x.Id);
             modelBuilder.Entity<ProductType>().HasKey(x => x.Id);
             modelBuilder.Entity<Enrollment>().HasKey(x => x.EnrollmentID);
+            modelBuilder.Entity<Client>().HasKey(x => x.Id);
+            modelBuilder.Entity<Order>().HasKey(x => x.Id);
+            modelBuilder.Entity<OrderState>().HasKey(x => x.Id);
+            modelBuilder.Entity<OrderDetail>().HasKey(x => x.Id);
+
 
 
 
@@ -27,8 +37,33 @@ namespace MagazynApp.Data
                 .WithMany(p => p.Product)
                 .HasForeignKey(pt => pt.TypeId);
 
-            base.OnModelCreating(modelBuilder);
-          
+            modelBuilder.Entity<Order>().HasOne<OrderState>(os => os.State)
+                .WithMany(o => o.Order)
+                .HasForeignKey(os => os.StateId);
+
+            modelBuilder.Entity<Order>().HasOne<Client>(oc => oc.Client)
+                .WithMany(o => o.Order)
+                .HasForeignKey(oc => oc.ClientId);
+
+            modelBuilder.Entity<Order>().HasMany<OrderDetail>(od => od.OrderLines)
+                .WithOne(o => o.Order)
+                .HasForeignKey(od => od.OrderId);
+
+            modelBuilder.Entity<OrderDetail>().HasOne<Product>(odp => odp.Product)
+                .WithMany(o => o.OrderLines)
+                .HasForeignKey(odp => odp.ProductId);
+
+            modelBuilder.Entity<OrderDetail>().HasOne<Order>(odo => odo.Order)
+                .WithMany(o => o.OrderLines)
+                .HasForeignKey(odo => odo.OrderId);
+
+            //modelBuilder.Entity<OrderDetail>().HasOne<Order>(od => od.Order)
+            //    .WithMany(o => o.OrderLines)
+            //    .HasForeignKey(od => od.OrderId);
+
+
         }
+
+
     }
 }

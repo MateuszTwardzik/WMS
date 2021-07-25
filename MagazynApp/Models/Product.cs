@@ -11,12 +11,13 @@ namespace MagazynApp.Models
         public int Id { get; set; }
         public string Name { get; set; }
         [DisplayFormat(ApplyFormatInEditMode = true)]
-        public decimal Quantity { get; set; }
+        public int Quantity { get; set; }
         [DataType(DataType.Currency)]
         [Column(TypeName = "money")]
         public decimal Price { get; set; }
         public int TypeId { get; set; }
         public ProductType Type{ get; set; }
+        public ICollection<OrderDetail> OrderLines { get; set; }
 
     }
 }

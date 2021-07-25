@@ -36,9 +36,6 @@ namespace MagazynApp.Controllers
             var products = _context.Product
                .Include(p => p.Type)
                .AsNoTracking();
-          //  var n = "Chemia";
-          //  var test = products.Where(p => p.Type.Name.Equals(n)).Count();
-            
 
             var typeName = _context.ProductType;
 
@@ -65,29 +62,6 @@ namespace MagazynApp.Controllers
                     Quantity = product.Value
                 }); ;
             }
-
-            //foreach (var type in typeName)
-            //{
-            //    lstModel.Add(new ProductsChartViewModel
-            //    {
-            //        Name = type.Name,
-            //        // Quantity = products.Where(p => p.Type.Name.Equals(name)).Count()
-            //        //Quantity = products.Count(p => p.Type.Name.Equals(type.Name))
-            //        Quantity = 10
-            //    });;
-            //}
-
-
-            //lstModel.Add(new ProductsChartViewModel
-            //{
-            //    Name = "Chemia",
-            //    Quantity = test
-            //});
-            //lstModel.Add(new ProductsChartViewModel
-            //{
-            //    Name = "water",
-            //    Quantity = 10
-            //});
             return View(lstModel);
         }
 

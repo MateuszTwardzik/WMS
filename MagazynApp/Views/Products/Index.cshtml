@@ -20,10 +20,10 @@
 <div>
     <p>
         Wybierz ilość elementów:
-        <a class="btn-smallblack"  asp-controller="Products" asp-action="Index" asp-route-setPageSize="set10">10</a>
-        <a class="btn-smallblack"  asp-controller="Products" asp-action="Index" asp-route-setPageSize="set20">20</a>
+        <a class="btn-smallblack" asp-controller="Products" asp-action="Index" asp-route-setPageSize="set10">10</a>
+        <a class="btn-smallblack" asp-controller="Products" asp-action="Index" asp-route-setPageSize="set20">20</a>
         <a class="btn-smallblack" asp-controller="Products" asp-action="Index" asp-route-setPageSize="set100">100</a>
-        <a class="btn-smallblack"  asp-controller="Products" asp-action="Index" asp-route-setPageSize="setAll">Wszystkie</a>
+        <a class="btn-smallblack" asp-controller="Products" asp-action="Index" asp-route-setPageSize="setAll">Wszystkie</a>
     </p>
 </div>
 <form asp-controller="Products" asp-action="Index" method="get">
@@ -37,7 +37,7 @@
     <thead>
         <tr>
             <th>
-                <a style="color: black" asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]"  asp-route-currentFilter="@ViewData["CurrentFilter"]">Nazwa</a>
+                <a style="color: black" asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Nazwa</a>
             </th>
             <th>
                 <a style="color: black" asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Ilosc</a>
@@ -70,12 +70,19 @@
                 <td>
                     <a style="color: black" asp-action="Edit" asp-route-id="@item.Id">Edytuj</a> |
                     <a style="color: black" asp-action="Details" asp-route-id="@item.Id">Szczegóły</a> |
-                    <a style="color: black" asp-action="Delete" asp-route-id="@item.Id">Usuń</a>
+                    <a style="color: black" asp-action="Delete" asp-route-id="@item.Id">Usuń</a> |
+                    <a style="color: black" asp-controller="ShoppingCart" asp-action="AddToShoppingCart" asp-route-productId="@item.Id">Dodaj do koszyka</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+
+
+@section Scripts {
+
+}
 
 @{
     var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
