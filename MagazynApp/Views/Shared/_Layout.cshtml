@@ -21,6 +21,12 @@
                 <li class="nav-item">
                     <a class="nav-link text-dark" asp-area="" asp-controller="ProductTypes" asp-action="Index">Rodzaje Produktów</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="ShoppingCart" asp-action="Index">Koszyk</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">Zamówienia</a>
+                </li>
                 <li>
                     @if (@HttpContextAccessor.HttpContext.Session.GetInt32("userPermission") == 99)
                     {

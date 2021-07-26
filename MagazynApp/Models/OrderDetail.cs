@@ -13,7 +13,13 @@ namespace MagazynApp.Models
         public int Quantity { get; set; }
 
         public decimal Price { get; set; }
-        // public decimal TotalPrice { get; set; }
+        public decimal TotalPrice 
+        { 
+            get
+            {
+                return Price * Quantity;
+            } 
+        }
         public virtual Product Product { get; set; }
         public virtual Order Order { get; set; }
     }

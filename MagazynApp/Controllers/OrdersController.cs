@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using MagazynApp.Data;
 using MagazynApp.Models;
 using MagazynApp.Data.Interfaces;
+using MagazynApp.ViewModel;
 
 namespace MagazynApp.Controllers
 {
@@ -25,9 +26,46 @@ namespace MagazynApp.Controllers
             _context = context;
         }
 
+        public async Task<IActionResult> Index()
+        {
+            var magazynContext = _context.Order.Include(o => o.Client).Include(o => o.State);
+            return View(await magazynContext.ToListAsync());
+        }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Order
+                .Include(o => o.Client)
+                .Include(o => o.State)
+                .Include(o => o.OrderLines)
+                .ThenInclude(o => o.Product)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+
+            List<OrderDetail> OrderItems = new List<OrderDetail>();
+
+            foreach(var orderDetail in order.OrderLines)
+            {
+                OrderItems.Add(orderDetail);
+            }
+            ViewData["OrderItems"] = OrderItems;
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View(order);
+        }
+
         public IActionResult Checkout()
         {
-            ViewData["ClientId"] = new SelectList(_context.Client, "Id", "Id");
+            ViewData["ClientId"] = new SelectList(_context.Client, "Id", "Fullname");
             return View();
         }
 

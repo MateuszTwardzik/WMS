@@ -1,8 +1,7 @@
 ﻿@model MagazynApp.ViewModel.ShoppingCartViewModel
 
-<div class="row checkoutForm">
-    <h2>Your shopping cart</h2>
-    <h4>Here are the drinks in your shopping cart.</h4>
+<div>
+    <h2 style="text-align:center">Twój koszyk</h2>
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
@@ -39,15 +38,16 @@
 
     <div class="text-right">
         <div class="btn-group ">
-            <a class="btn btn-success" asp-controller="Orders" asp-action="Checkout">Check out</a>
+            
             <a class="btn-group">
-                <a class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                    Add more products<span class="caret"></span>
+                <a class="btn btn-default" asp-controller="Products" asp-action="Index">
+                    Dodaj wiecej produktów
                 </a>
+                <a class="btn btn-success" asp-controller="Orders" asp-action="Checkout">Check out</a>
                 @*<ul class="dropdown-menu" role="menu">
-                    <li><a asp-controller="Product" asp-action="List" asp-route-category="Alcoholic">Alcoholic</a></li>
-                    <li><a asp-controller="Product" asp-action="List" asp-route-category="Non-alcoholic">Non Alcoholic</a></li>
-                </ul>*@
+            <li><a asp-controller="Product" asp-action="List" asp-route-category="Alcoholic">Alcoholic</a></li>
+            <li><a asp-controller="Product" asp-action="List" asp-route-category="Non-alcoholic">Non Alcoholic</a></li>
+        </ul>*@
             </a>
         </div>
     </div>

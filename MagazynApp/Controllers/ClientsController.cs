@@ -54,7 +54,7 @@ namespace MagazynApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,Surname,Address,PostalCode,Phone,Email")] Client client)
+        public async Task<IActionResult> Create([Bind("Id,Firstname,Surname,Address,PostalCode,Phone,Email")] Client client)
         {
             if (ModelState.IsValid)
             {

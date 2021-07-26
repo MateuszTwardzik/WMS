@@ -1,0 +1,88 @@
+﻿@model MagazynApp.Models.Order
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Szczegóły zamówienia nr. @Html.DisplayFor(model => model.Id)</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Nr. zamówienia
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class="col-sm-2">
+            Klient
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Client.Fullname)
+        </dd>
+        <dt class="col-sm-2">
+            Adres
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Client.Address)
+        </dd>
+        <dt class="col-sm-2">
+            Kod Pocztowy
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Client.PostalCode)
+        </dd>
+        <dt class="col-sm-2">
+            Całkowita cena zamówienia
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+        <dt class="col-sm-2">
+            Stan zamówienia
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.State.Name)
+        </dd>
+        <dt class="col-sm-2">
+            Data złożenia zamówienia
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.OrderDate)
+        </dd>
+    </dl>
+</div>
+
+<h2 style="text-align:center">Zamówione produkty</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nazwa</th>
+            <th>Ilość</th>
+            <th>Cena</th>
+        </tr>
+
+    </thead>
+    <tbody>
+        @foreach (var orderItem in (IEnumerable<OrderDetail>)ViewData["OrderItems"]){
+            <tr>
+                <td>
+                    @orderItem.Product.Name
+                </td>
+                <td>
+                    @orderItem.Quantity
+                </td>
+                <td>
+                    @orderItem.TotalPrice
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

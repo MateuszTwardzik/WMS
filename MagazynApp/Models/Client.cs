@@ -22,6 +22,12 @@ namespace MagazynApp.Models
         public string Email { get; set; }
         public ICollection<Order> Order { get; set; }
 
-
+        public string Fullname
+        {
+            get
+            {
+                return Firstname + " " + Surname;
+            }
+        }
     }
 }
