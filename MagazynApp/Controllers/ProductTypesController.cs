@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using MagazynApp.Data;
 using MagazynApp.Models;
 using MagazynApp.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MagazynApp.Controllers
 {
+    [Authorize]
     public class ProductTypesController : Controller
     {
         private readonly MagazynContext _context;

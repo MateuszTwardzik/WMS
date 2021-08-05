@@ -10,9 +10,11 @@ using MagazynApp.Data;
 using MagazynApp.Models;
 using MagazynApp.ViewModel;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MagazynApp.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly MagazynContext _context;

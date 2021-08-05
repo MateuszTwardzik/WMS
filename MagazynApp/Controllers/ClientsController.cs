@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MagazynApp.Data;
 using MagazynApp.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MagazynApp.Controllers
 {
+    [Authorize]
     public class ClientsController : Controller
     {
         private readonly MagazynContext _context;

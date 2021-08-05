@@ -51,7 +51,7 @@
     }
 
     .login-form {
-        margin-top: 60%;
+        margin-top: 25%;
     }
 
     .register-form {
@@ -91,7 +91,6 @@
     transition: all 0.3s ease 0s;
     cursor: pointer;
     outline: none;
-    position: absolute;
 }
 
     .btn-login:hover {

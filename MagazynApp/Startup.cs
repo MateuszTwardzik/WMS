@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using MagazynApp.Models;
 using MagazynApp.Data.Interfaces;
 using MagazynApp.Data.Repositories;
+using Microsoft.AspNetCore.Identity;
 
 namespace MagazynApp
 {
@@ -32,13 +33,11 @@ namespace MagazynApp
         public void ConfigureServices(IServiceCollection services)
         {
 
-                services.AddControllersWithViews();
+            services.AddControllersWithViews();
+            services.AddRazorPages();
             services.AddDbContext<MagazynContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-            //  services.AddScoped<IDataAccessProvider, DataAccessProvider>();
 
-            //  services.AddDatabaseDeveloperPageExceptionFilter();
-            //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
@@ -46,6 +45,41 @@ namespace MagazynApp
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
+
+            // iden
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings.
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequiredUniqueChars = 0;
+
+                // Lockout settings.
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 50;
+                options.Lockout.AllowedForNewUsers = true;
+
+                // User settings.
+                options.User.AllowedUserNameCharacters =
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.User.RequireUniqueEmail = false;
+            });
+            services.ConfigureApplicationCookie(options =>
+            {
+                // Cookie settings
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+
+                options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.SlidingExpiration = true;
+            });
+
+            // tity
+
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -71,6 +105,7 @@ namespace MagazynApp
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseSession();
@@ -78,7 +113,8 @@ namespace MagazynApp
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Login}/{action=Login}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }

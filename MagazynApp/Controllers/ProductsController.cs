@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using MagazynApp.Data;
 using MagazynApp.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MagazynApp.Controllers
 {
+    [Authorize]
     public class ProductsController : Controller
     {
         private readonly MagazynContext _context;
@@ -34,8 +36,7 @@ namespace MagazynApp.Controllers
             ViewData["QuantitySortParm"] = sortOrder == "quantity" ? "quantity_desc" : "quantity";
             ViewData["PriceSortParm"] = sortOrder == "price" ? "price_desc" : "price";
             ViewData["CurrentFilter"] = searchString;
-            if (HttpContext.Session.GetInt32("userId") != null)
-            {
+
                 var products = _context.Product
                                .Include(p => p.Type)
                                .AsNoTracking();
@@ -115,11 +116,7 @@ namespace MagazynApp.Controllers
 
                 return View(await PaginatedList<Product>.CreateAsyc(products.AsNoTracking(), pageNumber ?? 1, pageSize));
             }
-            else
-            {
-                return RedirectToAction("Login", "Login");
-            }
-        }
+
 
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)

@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using MagazynApp.Data;
 using MagazynApp.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MagazynApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private readonly MagazynContext _context;

@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Http
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/menuPanel.css" />
 </head>
+
 <body style="background-color:lightgrey">
     <div id="wrapper">
         <!-- Sidebar -->
@@ -28,15 +30,23 @@
                     <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">Zamówienia</a>
                 </li>
                 <li>
-                    @if (@HttpContextAccessor.HttpContext.Session.GetInt32("userPermission") == 99)
-                    {
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Użytkownicy</a>
-                    }
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Użytkownicy</a>
                 </li>
             </ul>
             <ul>
                 <li class="nav-item" id="Logout">
-                    <a class="nav-link text-dark" href='@Url.Action("Logout","Login")'>Logout</a>
+                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                        <button type="submit" id="logout-buttom">Logout</button>
+                    </form>
+
+                    @*<a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">Logout</a>*@
+                    @*<form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                            <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
+                        </form>*@
+
+                </li>
+                <li>
+
                 </li>
             </ul>
 
