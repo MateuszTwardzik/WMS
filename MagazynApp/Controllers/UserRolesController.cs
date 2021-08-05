@@ -59,6 +59,7 @@ namespace MagazynApp.Controllers
                     RoleId = role.Id,
                     RoleName = role.Name
                 };
+
                 try
                 {
                     var test = await _userManager.IsInRoleAsync(user, role.Name);
