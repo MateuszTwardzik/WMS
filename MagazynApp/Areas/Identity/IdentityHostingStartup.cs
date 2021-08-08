@@ -18,7 +18,8 @@ namespace MagazynApp.Areas.Identity
             builder.ConfigureServices((context, services) => {
                 services.AddDbContext<IdentityContext>(options =>
                     options.UseNpgsql(
-                        context.Configuration.GetConnectionString("IdentityContextConnection")));
+                        context.Configuration.GetConnectionString("IdentityContextConnection")),
+                        ServiceLifetime.Transient);
 
                 services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                     .AddRoles<IdentityRole>()

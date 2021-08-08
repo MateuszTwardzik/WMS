@@ -94,7 +94,12 @@ namespace MagazynApp.Controllers
 
         public IActionResult CheckoutComplete()
         {
-            ViewBag.CheckoutCompleteMessage = "Thanks for your order! :) ";
+            ViewBag.CheckoutCompleteMessage = "Zamówienie zostało złozone!";
+            return View();
+        }
+
+        public async Task<IActionResult> CompleteOrder()
+        {
             return View();
         }
     }

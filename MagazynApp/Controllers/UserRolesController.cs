@@ -60,23 +60,14 @@ namespace MagazynApp.Controllers
                     RoleName = role.Name
                 };
 
-                try
+                if (await _userManager.IsInRoleAsync(user, role.Name))
                 {
-                    var test = await _userManager.IsInRoleAsync(user, role.Name);
+                    userRolesViewModel.Selected = true;
                 }
-                catch(Exception ex)
+                else
                 {
-                    Console.WriteLine(ex);
+                    userRolesViewModel.Selected = false;
                 }
-
-                //if (await _userManager.IsInRoleAsync(user, role.Name))
-                //{
-                //    userRolesViewModel.Selected = true;
-                //}
-                //else
-                //{
-                //    userRolesViewModel.Selected = false;
-                //}
                 model.Add(userRolesViewModel);
             }
             return View(model);

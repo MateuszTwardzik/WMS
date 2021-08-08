@@ -45,14 +45,15 @@ namespace MagazynApp.Areas.Identity.Pages.Account
         {
             [Required]
             //[EmailAddress]
-            [Display(Name = "Email / Username")]
+            [Display(Name = "Email / Nazwa konta")]
             public string Email { get; set; }
 
             [Required]
+            [Display(Name = "Hasło")]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
-            [Display(Name = "Remember me?")]
+            [Display(Name = "Zapamiętaj hasło")]
             public bool RememberMe { get; set; }
         }
 

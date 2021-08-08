@@ -1,0 +1,33 @@
+﻿@model List<Microsoft.AspNetCore.Identity.IdentityUser>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Users Manager</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+        <tr>
+            <td>@user.Id</td>
+            <td>@user.UserName</td>
+            <td>@user.Email</td>
+            <td>
+                <form method="get" asp-action="EditUser" asp-controller="UserManager">
+                    <input value="@user.Id" type="hidden" name="userId" />
+                    <button type="submit">Edit</button>
+                </form>
+            </td>
+            @*<td><a style="color: black" asp-controller="RoleManager" asp-action="DeleteRole" asp-route-roleId="@role.Id" >X</a></td>*@
+        </tr>
+        }
+    </tbody>
+</table>

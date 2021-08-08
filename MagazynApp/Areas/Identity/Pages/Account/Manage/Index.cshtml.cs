@@ -32,6 +32,8 @@ namespace MagazynApp.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
+            [Display(Name ="Username")]
+            public string UserName { get; set; }
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
@@ -46,6 +48,7 @@ namespace MagazynApp.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
+                UserName = userName,
                 PhoneNumber = phoneNumber
             };
         }
@@ -83,6 +86,17 @@ namespace MagazynApp.Areas.Identity.Pages.Account.Manage
                 if (!setPhoneResult.Succeeded)
                 {
                     StatusMessage = "Unexpected error when trying to set phone number.";
+                    return RedirectToPage();
+                }
+            }
+
+            var userName = await _userManager.GetUserNameAsync(user);
+            if (Input.UserName != userName)
+            {
+                var setUserNameResult = await _userManager.SetUserNameAsync(user, Input.UserName);
+                if (!setUserNameResult.Succeeded)
+                {
+                    StatusMessage = "Unexpected error when trying to set Username.";
                     return RedirectToPage();
                 }
             }

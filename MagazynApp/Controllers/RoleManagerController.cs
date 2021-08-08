@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using MagazynApp.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,9 +12,12 @@ namespace MagazynApp.Controllers
     public class RoleManagerController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
-        public RoleManagerController(RoleManager<IdentityRole> roleManager)
+        private readonly IdentityContext _context;
+        public RoleManagerController(RoleManager<IdentityRole> roleManager, IdentityContext context)
         {
             _roleManager = roleManager;
+            _context = context;
+
         }
         public async Task<IActionResult> Index()
         {
@@ -27,6 +31,22 @@ namespace MagazynApp.Controllers
             {
                 await _roleManager.CreateAsync(new IdentityRole(roleName.Trim()));
             }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteRole(string roleId)
+        {
+            //var roles = await _roleManager.Roles.ToListAsync();
+            //var role = _roleManager.Roles.First(r => r.Id.Equals(roleId));
+
+            var role = await _roleManager.FindByIdAsync(roleId);
+
+            if (role != null)
+            {
+                await _roleManager.DeleteAsync(role);
+            }
+            
             return RedirectToAction("Index");
         }
     }
