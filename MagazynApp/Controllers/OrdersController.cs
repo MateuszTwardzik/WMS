@@ -97,10 +97,40 @@ namespace MagazynApp.Controllers
             ViewBag.CheckoutCompleteMessage = "Zamówienie zostało złozone!";
             return View();
         }
-
-        public async Task<IActionResult> CompleteOrder()
+        [HttpPost]
+        public async Task<IActionResult> CompleteOrder(int? orderId)
         {
-            return View();
+
+            if (orderId == null)
+            {
+                return NotFound();
+            }
+            var products = await _context.Product.ToListAsync();
+
+            var order = await _context.Order
+                .Include(o => o.Client)
+                .Include(o => o.State)
+                .Include(o => o.OrderLines)
+                .ThenInclude(o => o.Product)
+                .FirstOrDefaultAsync(m => m.Id == orderId);
+            if (order.StateId == 1)
+            {
+                foreach (var detail in order.OrderLines)
+                {
+                    var productStock = products.FirstOrDefault(p => p.Id == detail.ProductId);
+                    productStock.Quantity = productStock.Quantity - detail.Quantity;
+                    await SetAmount(detail.ProductId, productStock.Quantity);
+                }
+                order.StateId = 2;
+            }
+            return View(order);
+        }
+
+        public async Task<Product> SetAmount(int productId, int amount)
+        {
+            var product = await _context.Product.FindAsync(productId);
+            product.Quantity = amount;
+            return product;
         }
     }
 }

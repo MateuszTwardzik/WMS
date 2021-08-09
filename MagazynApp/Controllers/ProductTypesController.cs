@@ -9,45 +9,33 @@ using MagazynApp.Data;
 using MagazynApp.Models;
 using MagazynApp.ViewModel;
 using Microsoft.AspNetCore.Authorization;
+using MagazynApp.Data.Interfaces;
 
 namespace MagazynApp.Controllers
 {
     [Authorize]
     public class ProductTypesController : Controller
     {
-        private readonly MagazynContext _context;
+        public readonly IProductTypeRepository _productTypeRepository;
 
-        public ProductTypesController(MagazynContext context)
+        public ProductTypesController(IProductTypeRepository productTypeRepository)
         {
-            _context = context;
+            _productTypeRepository = productTypeRepository;
         }
 
-        // GET: ProductTypes
         public async Task<IActionResult> Index()
         {
-            var cos = await _context.ProductType
-                .Include(t => t.Product)
-                .Select(t => new ProductTypeViewModel()
-                {
-                    Id = t.Id,
-                    Name = t.Name,
-                    Quantity = t.Product.Count
-                })
-                .ToListAsync();
+            var types = await _productTypeRepository.ProductTypesAsyncToListWithAmount();
 
-            return View(cos);
+            return View(types);
         }
-
-        // GET: ProductTypes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var productType = await _context.ProductType
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var productType = await _productTypeRepository.FindProductTypeByIdAsync(id);
             if (productType == null)
             {
                 return NotFound();
@@ -56,29 +44,23 @@ namespace MagazynApp.Controllers
             return View(productType);
         }
 
-        // GET: ProductTypes/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: ProductTypes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] ProductType productType)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(productType);
-                await _context.SaveChangesAsync();
+                await _productTypeRepository.AddProductTypeAsync(productType);
                 return RedirectToAction(nameof(Index));
             }
             return View(productType);
         }
 
-        // GET: ProductTypes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -86,7 +68,7 @@ namespace MagazynApp.Controllers
                 return NotFound();
             }
 
-            var productType = await _context.ProductType.FindAsync(id);
+            var productType = await _productTypeRepository.FindProductTypeByIdAsync(id);
             if (productType == null)
             {
                 return NotFound();
@@ -94,9 +76,6 @@ namespace MagazynApp.Controllers
             return View(productType);
         }
 
-        // POST: ProductTypes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] ProductType productType)
@@ -110,12 +89,11 @@ namespace MagazynApp.Controllers
             {
                 try
                 {
-                    _context.Update(productType);
-                    await _context.SaveChangesAsync();
+                    await _productTypeRepository.UpdateProductType(productType);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductTypeExists(productType.Id))
+                    if (!_productTypeRepository.ProductTypeExists(productType.Id))
                     {
                         return NotFound();
                     }
@@ -129,16 +107,13 @@ namespace MagazynApp.Controllers
             return View(productType);
         }
 
-        // GET: ProductTypes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var productType = await _context.ProductType
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var productType = await _productTypeRepository.FindProductTypeByIdAsync(id);
             if (productType == null)
             {
                 return NotFound();
@@ -146,21 +121,13 @@ namespace MagazynApp.Controllers
 
             return View(productType);
         }
-
-        // POST: ProductTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var productType = await _context.ProductType.FindAsync(id);
-            _context.ProductType.Remove(productType);
-            await _context.SaveChangesAsync();
+            await _productTypeRepository.DeleteProductType(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductTypeExists(int id)
-        {
-            return _context.ProductType.Any(e => e.Id == id);
-        }
     }
 }

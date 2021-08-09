@@ -11,6 +11,7 @@ using MagazynApp.Models;
 using MagazynApp.ViewModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using MagazynApp.Data.Interfaces;
 
 namespace MagazynApp.Controllers
 {
@@ -19,11 +20,14 @@ namespace MagazynApp.Controllers
     {
         private readonly MagazynContext _context;
         private readonly ILogger<HomeController> _logger;
+        private readonly IProductRepository _productRepository;
+        private readonly IProductTypeRepository _productTypeRepository;
 
-        public HomeController(ILogger<HomeController> logger, MagazynContext context)
+        public HomeController(ILogger<HomeController> logger, MagazynContext context, IProductRepository productRepository, IProductTypeRepository productTypeRepository)
         {
             _logger = logger;
-            _context = context;
+            _productRepository = productRepository;
+            _productTypeRepository = productTypeRepository;
         }
 
         //public IActionResult Index()
@@ -33,13 +37,13 @@ namespace MagazynApp.Controllers
         //}
         public async Task<IActionResult> Index()
         {
-            ViewBag.products_number = _context.Product.Count().ToString();
-            ViewBag.users_number = _context.User.Count();
-            var products = _context.Product
-               .Include(p => p.Type)
-               .AsNoTracking();
+            // ViewBag.products_number = _context.Product.Count().ToString();
+            ViewBag.products_number = _productRepository.GetProducts().Count().ToString();
+            //ViewBag.users_number = _context.User.Count();
 
-            var typeName = _context.ProductType;
+            var products = _productRepository.GetProducts();
+
+            var typeName = _productTypeRepository.ProductTypesToList();
 
             var lstModel = new List<ProductsChartViewModel>();
             var typeList = new List<string>();
@@ -52,7 +56,7 @@ namespace MagazynApp.Controllers
             
             foreach(var type in typeList)
             {
-                productList.Add(type, products.Where(p => p.Type.Name.Equals(type)).Count());
+               productList.Add(type, products.Where(p => p.Type.Name.Equals(type)).Count());
             }
 
 

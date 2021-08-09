@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using MagazynApp.Data;
 using MagazynApp.Models;
 using Microsoft.AspNetCore.Authorization;
+using MagazynApp.Data.Interfaces;
 
 namespace MagazynApp.Controllers
 {
@@ -15,16 +16,16 @@ namespace MagazynApp.Controllers
     public class ClientsController : Controller
     {
         private readonly MagazynContext _context;
-
-        public ClientsController(MagazynContext context)
+        private readonly IClientRepository _clientRepository;
+        public ClientsController(MagazynContext context, IClientRepository clientRepository)
         {
             _context = context;
+            _clientRepository = clientRepository;
         }
 
-        // GET: Clients
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Client.ToListAsync());
+            return View(await _clientRepository.ClientsToListAsync());
         }
 
         // GET: Clients/Details/5
@@ -35,8 +36,7 @@ namespace MagazynApp.Controllers
                 return NotFound();
             }
 
-            var client = await _context.Client
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var client = await _clientRepository.FindClientByIdAsync(id);
             if (client == null)
             {
                 return NotFound();
@@ -45,29 +45,23 @@ namespace MagazynApp.Controllers
             return View(client);
         }
 
-        // GET: Clients/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Clients/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Firstname,Surname,Address,PostalCode,Phone,Email")] Client client)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(client);
-                await _context.SaveChangesAsync();
+                await _clientRepository.AddClientAsync(client);
                 return RedirectToAction(nameof(Index));
             }
             return View(client);
         }
 
-        // GET: Clients/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -75,7 +69,7 @@ namespace MagazynApp.Controllers
                 return NotFound();
             }
 
-            var client = await _context.Client.FindAsync(id);
+            var client = await _clientRepository.FindClientByIdAsync(id);
             if (client == null)
             {
                 return NotFound();
@@ -83,12 +77,9 @@ namespace MagazynApp.Controllers
             return View(client);
         }
 
-        // POST: Clients/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,Surname,Address,PostalCode,Phone,Email")] Client client)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Firstname,Surname,Address,PostalCode,Phone,Email")] Client client)
         {
             if (id != client.Id)
             {
@@ -99,12 +90,11 @@ namespace MagazynApp.Controllers
             {
                 try
                 {
-                    _context.Update(client);
-                    await _context.SaveChangesAsync();
+                    await _clientRepository.UpdateClientAsync(client);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ClientExists(client.Id))
+                    if (!_clientRepository.ClientExists(client.Id))
                     {
                         return NotFound();
                     }
@@ -118,7 +108,6 @@ namespace MagazynApp.Controllers
             return View(client);
         }
 
-        // GET: Clients/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -126,8 +115,7 @@ namespace MagazynApp.Controllers
                 return NotFound();
             }
 
-            var client = await _context.Client
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var client = await _clientRepository.FindClientByIdAsync(id);
             if (client == null)
             {
                 return NotFound();
@@ -136,20 +124,13 @@ namespace MagazynApp.Controllers
             return View(client);
         }
 
-        // POST: Clients/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var client = await _context.Client.FindAsync(id);
-            _context.Client.Remove(client);
-            await _context.SaveChangesAsync();
+            await _clientRepository.DeleteClientAync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ClientExists(int id)
-        {
-            return _context.Client.Any(e => e.Id == id);
-        }
     }
 }
