@@ -7,5 +7,6 @@ namespace MagazynApp.Data.Interfaces
 {
     public interface IOrderStateRepository
     {
+        Task ChangeState(int orderId, int stateId);
     }
 }

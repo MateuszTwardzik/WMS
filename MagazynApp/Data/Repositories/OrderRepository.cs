@@ -1,5 +1,6 @@
 ﻿using MagazynApp.Data.Interfaces;
 using MagazynApp.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,5 +55,35 @@ namespace MagazynApp.Data.Repositories
             _context.Order.Add(order);
             _context.SaveChanges();
         }
+
+        public async Task<Order> FindOrderByIdAsync(int? id)
+        {
+            var order = await _context.Order
+                .Include(o => o.Client)
+                .Include(o => o.State)
+                .Include(o => o.OrderLines)
+                .ThenInclude(o => o.Product)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            return order;
+        }
+        public async Task<IList<Order>> OrdersToListAsync()
+        {
+            var orderList = await _context.Order.Include(o => o.Client).Include(o => o.State).ToListAsync();
+            return orderList;
+        }
+
+        public async Task DeleteOrder(int orderId)
+        {
+            var order = await FindOrderByIdAsync(orderId);
+            foreach(var detail in order.OrderLines)
+            {
+                _context.OrderDetail.Remove(detail);
+            }
+            
+            
+            _context.Order.Remove(order);
+            await _context.SaveChangesAsync();
+        }
     }
+
 }

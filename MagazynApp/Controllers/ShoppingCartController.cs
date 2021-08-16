@@ -33,12 +33,12 @@ namespace MagazynApp.Controllers
             return View(shoppingCartViewModel);
         }
 
-        public RedirectToActionResult AddToShoppingCart(int productId)
+        public RedirectToActionResult AddToShoppingCart(int productId, int amount)
         {
             var selectedProduct = _context.Product.FirstOrDefault(p => p.Id == productId);
             if (selectedProduct != null)
             {
-                _shoppingCart.AddToCart(selectedProduct, 1);
+                _shoppingCart.AddToCart(selectedProduct, amount);
             }
             return RedirectToAction("Index");
         }

@@ -33,10 +33,12 @@ namespace MagazynApp
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllersWithViews();
+           // services.AddControllersWithViews();
+            services.AddControllers();
             services.AddRazorPages();
             services.AddDbContext<MagazynContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")),
+                ServiceLifetime.Transient);
 
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
@@ -46,7 +48,6 @@ namespace MagazynApp
                 options.Cookie.IsEssential = true;
             });
 
-            // iden
             services.Configure<IdentityOptions>(options =>
             {
                 // Password settings.
@@ -78,7 +79,6 @@ namespace MagazynApp
                 options.SlidingExpiration = true;
             });
 
-            // tity
 
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -88,6 +88,7 @@ namespace MagazynApp
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IProductTypeRepository, ProductTypeRepository>();
             services.AddTransient<IClientRepository, ClientRepository>();
+            services.AddTransient<IOrderStateRepository, OrderStateRepository>();
 
         }
 
@@ -106,7 +107,6 @@ namespace MagazynApp
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

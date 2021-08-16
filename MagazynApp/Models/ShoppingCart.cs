@@ -46,7 +46,7 @@ namespace MagazynApp.Models
                 {
                     ShoppingCartId = ShoppingCartId.ToString(),
                     Product = product,
-                    Amount = 1
+                    Amount = amount
                 };
 
                 _context.ShoppingCartItems.Add(shoppingCartItem);
@@ -58,30 +58,30 @@ namespace MagazynApp.Models
             _context.SaveChanges();
         }
 
-        public int RemoveFromCart(Product product)
+        public void RemoveFromCart(Product product)
         {
             var shoppingCartItem =
                     _context.ShoppingCartItems.SingleOrDefault(
                         s => s.Product.Id == product.Id && s.ShoppingCartId == ShoppingCartId);
 
-            var localAmount = 0;
+           //var localAmount = 0;
 
             if (shoppingCartItem != null)
             {
-                if (shoppingCartItem.Amount > 1)
-                {
-                    shoppingCartItem.Amount--;
-                    localAmount = shoppingCartItem.Amount;
-                }
-                else
-                {
+                //if (shoppingCartItem.Amount > 1)
+                //{
+                //    shoppingCartItem.Amount--;
+                //    localAmount = shoppingCartItem.Amount;
+                //}
+                //else
+                //{
                     _context.ShoppingCartItems.Remove(shoppingCartItem);
-                }
+               // }
             }
 
             _context.SaveChanges();
 
-            return localAmount;
+            //return localAmount;
         }
 
         public List<ShoppingCartItem> GetShoppingCartItems()

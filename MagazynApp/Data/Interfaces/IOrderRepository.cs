@@ -9,5 +9,8 @@ namespace MagazynApp.Data.Interfaces
     public interface IOrderRepository
     {
         void CreateOrder(Order order);
+        Task<Order> FindOrderByIdAsync(int? id);
+        Task<IList<Order>> OrdersToListAsync();
+        Task DeleteOrder(int orderId);
     }
 }

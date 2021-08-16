@@ -9,7 +9,7 @@ namespace MagazynApp.Data
         {
 
         }
-        public DbSet<User> User{ get; set; }
+        public DbSet<User> User { get; set; }
         public DbSet<Client> Client { get; set; }
         public DbSet<Product> Product { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
@@ -18,6 +18,7 @@ namespace MagazynApp.Data
         public DbSet<OrderDetail> OrderDetail { get; set; }
         public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
         public DbSet<ShoppingCart> ShoppingCart { get; set; }
+        public DbSet<MissingOrderedProduct> MissingOrderedProduct { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,7 +30,7 @@ namespace MagazynApp.Data
             modelBuilder.Entity<Order>().HasKey(x => x.Id);
             modelBuilder.Entity<OrderState>().HasKey(x => x.Id);
             modelBuilder.Entity<OrderDetail>().HasKey(x => x.Id);
-
+            modelBuilder.Entity<MissingOrderedProduct>().HasKey(x => x.Id);
 
 
 
@@ -56,6 +57,18 @@ namespace MagazynApp.Data
             modelBuilder.Entity<OrderDetail>().HasOne<Order>(odo => odo.Order)
                 .WithMany(o => o.OrderLines)
                 .HasForeignKey(odo => odo.OrderId);
+
+            //modelBuilder.Entity<Order>().HasMany<MissingOrderedProduct>(om => om.MissingOrderedProducts)
+            //    .WithOne(o => o.Order)
+            //    .HasForeignKey(od => od.OrderId);
+
+            //modelBuilder.Entity<MissingOrderedProduct>().HasOne<Product>(odp => odp.Product)
+            //    .WithMany(o => o.MissingOrderedProducts)
+            //    .HasForeignKey(odp => odp.ProductId);
+
+            //modelBuilder.Entity<MissingOrderedProduct>().HasOne<Order>(odp => odp.Order)
+            //    .WithMany(o => o.MissingOrderedProducts)
+            //    .HasForeignKey(odp => odp.OrderId);
 
             //modelBuilder.Entity<OrderDetail>().HasOne<Order>(od => od.Order)
             //    .WithMany(o => o.OrderLines)

@@ -13,6 +13,7 @@ namespace MagazynApp.Data.Interfaces
         Task AddProductAsync(Product product);
         Task DeleteProduct(int id);
         Task UpdateProduct(Product product);
+        Task SetAmountAsync(int id, int amount);
         bool ProductExists(int id);
     }
 }

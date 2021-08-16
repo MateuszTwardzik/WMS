@@ -9,6 +9,22 @@
     Layout = "_Layout";
 }
 
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#simpledialog").click(function () {
+                $("#dialogbox").dialog();
+            });
+        });
+    </script>
+</head>
+
+
+
 <h1>
     Produkty
     @TempData["Message"]
@@ -72,18 +88,18 @@
                     <a style="color: black" asp-action="Details" asp-route-id="@item.Id">Szczegóły</a> |
                     <a style="color: black" asp-action="Delete" asp-route-id="@item.Id">Usuń</a> |
                     <a style="color: black" asp-controller="ShoppingCart" asp-action="AddToShoppingCart" asp-route-productId="@item.Id">Dodaj do koszyka</a>
+                    <form asp-controller="ShoppingCart" asp-action="AddToShoppingCart">
+                        <div>
+                            <input value="@item.Id" name="productId" type="hidden"/>
+                            <input value="1" name="amount" style="background: lightgrey"/>
+                            <button type="submit" style="background: white">Dodaj do koszyka</button>
+                        </div>
+                    </form>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-
-
-
-
-@section Scripts {
-
-}
 
 @{
     var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";

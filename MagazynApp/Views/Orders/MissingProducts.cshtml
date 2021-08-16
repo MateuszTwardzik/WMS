@@ -1,0 +1,40 @@
+﻿@model IEnumerable<MagazynApp.ViewModel.MissingOrderedProductViewModel>
+
+@{
+    ViewData["Title"] = "MissingOrders";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Brakujące towary</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Nazwa produktu
+            </th>
+            <th>
+                Magazynowana ilość
+            </th>
+            <th>
+                Zamówiona ilość
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderedAmount)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

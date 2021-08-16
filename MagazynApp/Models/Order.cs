@@ -11,14 +11,7 @@ namespace MagazynApp.Models
     {
         [Column("OrderId")]
         public int Id { get; set; }
-       // public int ProductId { get; set; }
-        //public int OrderDetailId { get; set; }
         public IList<OrderDetail> OrderLines { get; set; } = new List<OrderDetail>();
-      //  public string FirstName { get; set; }
-       // public string LastName { get; set; }
-
-
-        //public Product Product { get; set; }
         public int ClientId { get; set; }
         public Client Client { get; set; }
         public int Quantity { get; set; }
@@ -27,7 +20,6 @@ namespace MagazynApp.Models
         public OrderState State { get; set; }
         [DataType(DataType.Date)]
         public DateTime OrderDate { get; set; }
-
-
+        public IList<MissingOrderedProduct> MissingOrderedProducts { get; set; } = new List<MissingOrderedProduct>();
     }
 }

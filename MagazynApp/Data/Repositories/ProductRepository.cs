@@ -19,16 +19,14 @@ namespace MagazynApp.Data.Repositories
         public IQueryable<Product> GetProducts()
         {
             var products = _context.Product
-               .Include(p => p.Type)
-               .AsNoTracking();
+               .Include(p => p.Type);
 
             return products;
         }
         public async Task<Product> FindProductByIdAsync(int? id)
         {
             var products = _context.Product
-                 .Include(p => p.Type)
-                 .AsNoTracking();
+                 .Include(p => p.Type);
 
             var product = await products.FirstOrDefaultAsync(p => p.Id == id);
             return product;
@@ -52,6 +50,13 @@ namespace MagazynApp.Data.Repositories
         public bool ProductExists(int id)
         {
             return _context.Product.Any(e => e.Id == id);
+        }
+
+        public async Task SetAmountAsync(int id, int amount)
+        {
+            var product = await FindProductByIdAsync(id);
+            product.Quantity = amount;
+            await UpdateProduct(product);
         }
     }
 }
