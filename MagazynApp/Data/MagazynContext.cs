@@ -11,7 +11,6 @@ namespace MagazynApp.Data
         }
         public DbSet<Client> Client { get; set; }
         public DbSet<Product> Product { get; set; }
-        public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<ProductType> ProductType { get; set; }
         public DbSet<Order> Order { get; set; }
         public DbSet<OrderDetail> OrderDetail { get; set; }
@@ -20,17 +19,14 @@ namespace MagazynApp.Data
         public DbSet<ShoppingCart> ShoppingCart { get; set; }
         public DbSet<MissingOrderedProduct> MissingOrderedProduct { get; set; }
         public DbSet<Supply> Supply { get; set; }
-        public DbSet<SupplyDetail> SupplyDetail { get; set; }
         public DbSet<SupplyState> SupplyState { get; set; }
-        public DbSet<StockForRelease> StockForRelease { get; set; }
-        public DbSet<StockForReleaseState> StockForReleaseState { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>().HasKey(x => x.Id);
             modelBuilder.Entity<ProductType>().HasKey(x => x.Id);
 
-            modelBuilder.Entity<Enrollment>().HasKey(x => x.EnrollmentID);
 
             modelBuilder.Entity<Client>().HasKey(x => x.Id);
 
@@ -41,13 +37,10 @@ namespace MagazynApp.Data
             modelBuilder.Entity<MissingOrderedProduct>().HasKey(x => x.Id);
 
             modelBuilder.Entity<Supply>().HasKey(x => x.Id);
-            modelBuilder.Entity<SupplyDetail>().HasKey(x => x.Id);
             modelBuilder.Entity<SupplyState>().HasKey(x => x.Id);
 
             modelBuilder.Entity<ShoppingCartItem>().HasKey(x => x.ShoppingCartItemId);
 
-            modelBuilder.Entity<StockForRelease>().HasKey(x => x.Id);
-            modelBuilder.Entity<StockForReleaseState>().HasKey(x => x.Id);
 
 
             modelBuilder.Entity<Product>().HasOne<ProductType>(pt => pt.Type)
@@ -74,10 +67,6 @@ namespace MagazynApp.Data
                   .WithOne(o => o.Order)
                   .HasForeignKey(od => od.OrderId);
 
-            modelBuilder.Entity<Order>().HasMany<StockForRelease>(om => om.StockForRelease)
-                   .WithOne(o => o.Order)
-                   .HasForeignKey(od => od.OrderId);
-
 
 
 
@@ -93,9 +82,6 @@ namespace MagazynApp.Data
 
 
 
-            modelBuilder.Entity<Supply>().HasMany<SupplyDetail>(sd => sd.SupplyDetails)
-                .WithOne(s => s.Supply)
-                .HasForeignKey(sd => sd.SupplyId);
 
             modelBuilder.Entity<Supply>().HasOne<SupplyState>(ss => ss.State)
                 .WithMany(s => s.Supply)
@@ -103,9 +89,7 @@ namespace MagazynApp.Data
 
 
 
-            modelBuilder.Entity<SupplyDetail>().HasOne<Product>(sdp => sdp.Product)
-                .WithMany(s => s.SupplyDetails)
-                .HasForeignKey(sdp => sdp.ProductId);
+ 
 
 
 
@@ -128,17 +112,6 @@ namespace MagazynApp.Data
 
 
 
-            modelBuilder.Entity<StockForRelease>().HasOne<StockForReleaseState>(os => os.State)
-                .WithMany(o => o.StockForRelease)
-                .HasForeignKey(os => os.StateId);
-
-            modelBuilder.Entity<StockForRelease>().HasOne<Product>(od => od.Product)
-                .WithMany(o => o.StockForRelease)
-                .HasForeignKey(od => od.ProductId);
-
-            modelBuilder.Entity<StockForRelease>().HasOne<Order>(od => od.Order)
-                .WithMany(o => o.StockForRelease)
-                .HasForeignKey(od => od.OrderId);
             //modelBuilder.Entity<OrderDetail>().HasOne<Order>(od => od.Order)
             //    .WithMany(o => o.OrderLines)
             //    .HasForeignKey(od => od.OrderId);

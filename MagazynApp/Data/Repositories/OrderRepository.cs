@@ -76,7 +76,6 @@ namespace MagazynApp.Data.Repositories
             var order = await _context.Order
                 .Include(o => o.Client)
                 .Include(o => o.State)
-                .Include(o => o.StockForRelease)
                 .Include(o => o.MissingOrderedProducts)
                 .Include(o => o.OrderLines)
                 .ThenInclude(o => o.Product)
@@ -102,7 +101,6 @@ namespace MagazynApp.Data.Repositories
                     await _productRepository.SetAmountAsync(product.Id, productStock);
                 }
 
-                _context.StockForRelease.RemoveRange(order.StockForRelease);
             }
             _context.OrderDetail.RemoveRange(order.OrderLines);
 

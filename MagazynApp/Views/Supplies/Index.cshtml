@@ -44,6 +44,7 @@
                 @Html.DisplayFor(modelItem => item.CompletionDate)
             </td>
             <td>
+                <a style="color: black" asp-action="DeleteSupply" asp-route-supplyId="@item.Id">Usuń</a> |
                 <a style="color: black" asp-action="CompleteSupply" asp-route-SupplyId="@item.Id">Zrealizuj</a>
             </td>
         </tr>

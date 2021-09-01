@@ -22,6 +22,5 @@ namespace MagazynApp.Models
         public DateTime OrderDate { get; set; }
         public DateTime CompletionDate { get; set; }
         public IList<MissingOrderedProduct> MissingOrderedProducts { get; set; } = new List<MissingOrderedProduct>();
-        public IList<StockForRelease> StockForRelease { get; set; } = new List<StockForRelease>();
     }
 }

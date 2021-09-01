@@ -16,55 +16,39 @@ namespace MagazynApp.Controllers
 
         private readonly MagazynContext _context;
         private readonly IProductRepository _productRepository;
+        private readonly ISupplyRepository _supplyRepository;
 
-        public SuppliesController(MagazynContext context, IProductRepository productRepository)
+        public SuppliesController(MagazynContext context, IProductRepository productRepository, ISupplyRepository supplyRepository)
         {
             _context = context;
             _productRepository = productRepository;
+            _supplyRepository = supplyRepository;
         }
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-
-            var suplies = await _context.Supply.Include(s => s.State).Include(s => s.Product).ToListAsync();
-            return View(suplies);
+            return View(await _supplyRepository.SupplyToListAsync());
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateSupply(int productId, int amount)
         {
-            var supply = new Supply
-            {
-                ProductId = productId,
-                Amount = amount,
-                StateId = 1,
-                OrderDate = DateTime.Now
-
-            };
-            await _context.AddAsync(supply);
-            await _context.SaveChangesAsync();
-
+            await _supplyRepository.CreateSupplyAsync(productId, amount);
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> CompleteSupply(int? supplyId)
+        [HttpPost]
+        public async Task<IActionResult> CompleteSupply(int supplyId)
         {
-            var supply = await _context.Supply.Include(s => s.State).Include(s => s.Product).FirstOrDefaultAsync(s => s.Id == supplyId);
-            using var transaction = _context.Database.BeginTransaction();
-            try
-            {
-                supply.StateId = 2;
-                supply.CompletionDate = DateTime.Now;
-                supply.Product.Quantity += supply.Amount;
-                await _context.SaveChangesAsync();
+            var supply = await _supplyRepository.FindSupplyAsync(supplyId);
+            await _supplyRepository.CompleteSupplyAsync(supply);
+            return RedirectToAction("Index");
+        }
 
-                transaction.Commit();
-            }
-            catch (Exception)
-            {
-                transaction.Rollback();
-
-            }
+        [HttpPost]
+        public async Task<IActionResult> DeleteSupply(int supplyId)
+        {
+            await _supplyRepository.DeleteSupplyAsync(supplyId);
             return RedirectToAction("Index");
         }
 

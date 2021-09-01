@@ -11,7 +11,6 @@ namespace MagazynApp.Models
         public int ProductId { get; set; }
         public Product Product { get; set; }
         public int Amount { get; set; }
-        public IList<SupplyDetail> SupplyDetails { get; set; } = new List<SupplyDetail>();
         public int StateId { get; set; }
         public SupplyState State { get; set; }
 

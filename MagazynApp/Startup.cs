@@ -91,7 +91,7 @@ namespace MagazynApp
             services.AddTransient<IProductTypeRepository, ProductTypeRepository>();
             services.AddTransient<IClientRepository, ClientRepository>();
             services.AddTransient<IOrderStateRepository, OrderStateRepository>();
-
+            services.AddTransient<ISupplyRepository, SupplyRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
