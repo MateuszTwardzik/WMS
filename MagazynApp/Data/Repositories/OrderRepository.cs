@@ -1,4 +1,5 @@
 ﻿using MagazynApp.Data.Interfaces;
+using MagazynApp.Exceptions;
 using MagazynApp.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,48 +13,62 @@ namespace MagazynApp.Data.Repositories
     {
         private readonly MagazynContext _context;
         private readonly ShoppingCart _shoppingCart;
+        private readonly IProductRepository _productRepository;
 
 
-        public OrderRepository(MagazynContext context, ShoppingCart shoppingCart)
+        public OrderRepository(MagazynContext context, ShoppingCart shoppingCart, IProductRepository productRepository)
         {
             _context = context;
             _shoppingCart = shoppingCart;
+            _productRepository = productRepository;
         }
 
 
-        public void CreateOrder(Order order)
+        public async Task CreateOrderAsync(Order order)
         {
             order.OrderDate = DateTime.Now;
             order.StateId = 1;
-            decimal total = 0;
-            int quantity = 0;
-
-            //order = _context.Order.Add(order).Entity;
-            //_context.SaveChanges();            
 
             var shoppingCartItems = _shoppingCart.ShoppingCartItems;
+            var missingItems = shoppingCartItems.Where(x => x.Amount > x.Product.Quantity);
 
-            foreach (var shoppingCartItem in shoppingCartItems)
+            using var transaction = _context.Database.BeginTransaction();
+            try
             {
-                var orderDetail = new OrderDetail()
+                if (missingItems.Any())
                 {
-                    Quantity = shoppingCartItem.Amount,
-                    ProductId = shoppingCartItem.Product.Id,
-                    //OrderId = order.Id,
-                    Price = shoppingCartItem.Product.Price
-                };
+                    throw new MissingOrderItemsException(missingItems.Select(x => x.ProductId).ToList());
+                }
 
-                total += shoppingCartItem.Product.Price * shoppingCartItem.Amount;
-                quantity += shoppingCartItem.Amount;
+                order.OrderLines = shoppingCartItems.Select(x => new OrderDetail()
+                {
+                    Quantity = x.Amount,
+                    ProductId = x.ProductId,
+                    Price = x.Product.Price
+                }).ToList();
 
 
-                //_context.OrderDetail.Add(orderDetail);
-                order.OrderLines.Add(orderDetail);
+                order.Quantity = order.OrderLines.Sum(x => x.Quantity);
+
+                order.Price = order.OrderLines.Sum(x => x.Quantity * x.Price);
+
+                await _context.Order.AddAsync(order);
+
+                foreach (var detail in order.OrderLines)
+                {
+                    var product = await _productRepository.FindProductByIdAsync(detail.ProductId);
+                    await _productRepository.SetAmountAsync(product.Id, product.Quantity - detail.Quantity);
+                }
+
+                await _context.SaveChangesAsync();
+                transaction.Commit();
             }
-            order.Price = total;
-            order.Quantity = quantity;
-            _context.Order.Add(order);
-            _context.SaveChanges();
+            catch (MissingOrderItemsException)
+            {
+                transaction.Rollback();
+
+            }
+
         }
 
         public async Task<Order> FindOrderByIdAsync(int? id)
@@ -61,9 +76,12 @@ namespace MagazynApp.Data.Repositories
             var order = await _context.Order
                 .Include(o => o.Client)
                 .Include(o => o.State)
+                .Include(o => o.StockForRelease)
+                .Include(o => o.MissingOrderedProducts)
                 .Include(o => o.OrderLines)
                 .ThenInclude(o => o.Product)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             return order;
         }
         public async Task<IList<Order>> OrdersToListAsync()
@@ -75,12 +93,19 @@ namespace MagazynApp.Data.Repositories
         public async Task DeleteOrder(int orderId)
         {
             var order = await FindOrderByIdAsync(orderId);
-            foreach(var detail in order.OrderLines)
+            if (order.StateId == 1)
             {
-                _context.OrderDetail.Remove(detail);
+                foreach (var detail in order.OrderLines)
+                {
+                    var product = await _productRepository.FindProductByIdAsync(detail.ProductId);
+                    var productStock = product.Quantity + detail.Quantity;
+                    await _productRepository.SetAmountAsync(product.Id, productStock);
+                }
+
+                _context.StockForRelease.RemoveRange(order.StockForRelease);
             }
-            
-            
+            _context.OrderDetail.RemoveRange(order.OrderLines);
+
             _context.Order.Remove(order);
             await _context.SaveChangesAsync();
         }

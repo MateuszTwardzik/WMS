@@ -18,7 +18,9 @@ namespace MagazynApp.Models
         public int TypeId { get; set; }
         public ProductType Type{ get; set; }
         public ICollection<OrderDetail> OrderLines { get; set; }
-       // public IList<MissingOrderedProduct> MissingOrderedProducts { get; set; }
+        public ICollection<SupplyDetail> SupplyDetails { get; set; }
+        public IList<MissingOrderedProduct> MissingOrderedProducts { get; set; }
+        public IList<StockForRelease> StockForRelease { get; set; }
 
     }
 }

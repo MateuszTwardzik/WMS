@@ -33,15 +33,25 @@ namespace MagazynApp.Controllers
             return View(shoppingCartViewModel);
         }
 
-        public RedirectToActionResult AddToShoppingCart(int productId, int amount)
+        public async Task<RedirectToActionResult> AddToShoppingCartAsync(int productId, int amount)
         {
             var selectedProduct = _context.Product.FirstOrDefault(p => p.Id == productId);
             if (selectedProduct != null)
             {
-                _shoppingCart.AddToCart(selectedProduct, amount);
+                await _shoppingCart.AddToCartAsync(selectedProduct, amount);
             }
             return RedirectToAction("Index");
         }
+
+        //public RedirectToActionResult AddToShoppingCart(int productId, int amount)
+        //{
+        //    var selectedProduct = _context.Product.FirstOrDefault(p => p.Id == productId);
+        //    if (selectedProduct != null)
+        //    {
+        //       _shoppingCart.AddToCart(selectedProduct, amount);
+        //    }
+        //    return RedirectToAction("Index");
+        //}
 
         public RedirectToActionResult RemoveFromShoppingCart(int productId)
         {

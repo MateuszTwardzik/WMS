@@ -34,10 +34,10 @@ namespace MagazynApp.Models
             return new ShoppingCart(context) { ShoppingCartId = cartId };
         }
 
-        public void AddToCart(Product product, int amount)
+        public async Task AddToCartAsync(Product product, int amount)
         {
             var shoppingCartItem =
-                    _context.ShoppingCartItems.SingleOrDefault(
+                    await _context.ShoppingCartItems.SingleOrDefaultAsync(
                         s => s.Product.Id == product.Id && s.ShoppingCartId == ShoppingCartId);
 
             if (shoppingCartItem == null)
@@ -45,18 +45,43 @@ namespace MagazynApp.Models
                 shoppingCartItem = new ShoppingCartItem
                 {
                     ShoppingCartId = ShoppingCartId.ToString(),
-                    Product = product,
+                    ProductId = product.Id,
+                    //Product = product,
                     Amount = amount
                 };
 
-                _context.ShoppingCartItems.Add(shoppingCartItem);
+                await _context.ShoppingCartItems.AddAsync(shoppingCartItem);
             }
             else
             {
-                shoppingCartItem.Amount++;
+                shoppingCartItem.Amount += amount;                
             }
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
+
+        //public void AddToCart(Product product, int amount)
+        //{
+        //    var shoppingCartItem =
+        //             _context.ShoppingCartItems.SingleOrDefault(
+        //                s => s.Product.Id == product.Id && s.ShoppingCartId == ShoppingCartId);
+
+        //    if (shoppingCartItem == null)
+        //    {
+        //        shoppingCartItem = new ShoppingCartItem
+        //        {
+        //            ShoppingCartId = ShoppingCartId.ToString(),
+        //            ProductId = product.Id,                 
+        //            Amount = amount
+        //        };
+
+        //        _context.ShoppingCartItems.Add(shoppingCartItem);
+        //    }
+        //    else
+        //    {
+        //        shoppingCartItem.Amount += amount;
+        //    }
+        //    _context.SaveChanges();
+        //}
 
         public void RemoveFromCart(Product product)
         {
@@ -64,24 +89,13 @@ namespace MagazynApp.Models
                     _context.ShoppingCartItems.SingleOrDefault(
                         s => s.Product.Id == product.Id && s.ShoppingCartId == ShoppingCartId);
 
-           //var localAmount = 0;
 
             if (shoppingCartItem != null)
             {
-                //if (shoppingCartItem.Amount > 1)
-                //{
-                //    shoppingCartItem.Amount--;
-                //    localAmount = shoppingCartItem.Amount;
-                //}
-                //else
-                //{
-                    _context.ShoppingCartItems.Remove(shoppingCartItem);
-               // }
+                _context.ShoppingCartItems.Remove(shoppingCartItem);
             }
 
             _context.SaveChanges();
-
-            //return localAmount;
         }
 
         public List<ShoppingCartItem> GetShoppingCartItems()
@@ -91,6 +105,14 @@ namespace MagazynApp.Models
                        _context.ShoppingCartItems.Where(c => c.ShoppingCartId == ShoppingCartId)
                            .Include(s => s.Product)
                            .ToList());
+        }
+        public async Task<List<ShoppingCartItem>> GetShoppingCartItemsAsync()
+        {
+            return ShoppingCartItems ??
+                   (ShoppingCartItems = await
+                        _context.ShoppingCartItems.Where(c => c.ShoppingCartId == ShoppingCartId)
+                           .Include(s => s.Product)
+                           .ToListAsync());
         }
 
         public void ClearCart()

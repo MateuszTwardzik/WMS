@@ -1,0 +1,52 @@
+﻿@model IEnumerable<MagazynApp.Models.Supply>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Zamówienia przychodzące</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nazwa produktu</th>
+
+            <th>Ilośc)</th>
+            <th>
+                Stan
+            </th>
+            <th>
+                Data zamówienia
+            </th>
+            <th>
+                Data realizacji
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.State.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompletionDate)
+            </td>
+            <td>
+                <a style="color: black" asp-action="CompleteSupply" asp-route-SupplyId="@item.Id">Zrealizuj</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

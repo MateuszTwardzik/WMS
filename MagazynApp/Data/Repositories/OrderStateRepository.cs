@@ -1,4 +1,5 @@
 ﻿using MagazynApp.Data.Interfaces;
+using MagazynApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,11 +16,12 @@ namespace MagazynApp.Data.Repositories
             _context = context;
             _orderRepository = orderRepository;
         }
-        public async Task ChangeState(int orderId, int stateId)
+        public async Task ChangeStateAsync(Order order, int stateId)
         {
-            var order = await _orderRepository.FindOrderByIdAsync(orderId);
-            order.StateId = 2;
-            _context.Update(order);
+            order.StateId = stateId;
+            order.State = _context.OrderState.FirstOrDefault(o => o.Id == stateId);
+            order.CompletionDate = DateTime.Now;
+            _context.Order.Update(order);
             await _context.SaveChangesAsync();
         }
     }

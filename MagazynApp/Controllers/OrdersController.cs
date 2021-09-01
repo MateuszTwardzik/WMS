@@ -10,7 +10,7 @@ using MagazynApp.Models;
 using MagazynApp.Data.Interfaces;
 using MagazynApp.ViewModel;
 using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace MagazynApp.Controllers
 {
@@ -79,41 +79,25 @@ namespace MagazynApp.Controllers
         public async Task<IActionResult> Checkout(Order order)
         {
             ViewData["ClientId"] = new SelectList(_context.Client, "Id", "Id", order.ClientId);
-            var items = _shoppingCart.GetShoppingCartItems();
+            var items = await _shoppingCart.GetShoppingCartItemsAsync();
             _shoppingCart.ShoppingCartItems = items;
 
-            List<MissingOrderedProduct> missingItemsList = new List<MissingOrderedProduct>();
-            foreach(var item in items)
-            {
-                if(item.Amount > _productRepository.FindProductByIdAsync(item.Product.Id).Result.Quantity)
-                {
-                    var product = await _productRepository.FindProductByIdAsync(item.Product.Id);
-                    var missingItem = new MissingOrderedProduct()
-                    {
-                        ProductId = item.Product.Id,
-                        ProductAmount = product.Quantity,
-                        OrderId = order.Id,
-                        OrderedAmount = item.Amount
-                    };
-                    missingItemsList.Add(missingItem);
-                    _context.Add(missingItem);
-                }
-            }
 
-            if (_shoppingCart.ShoppingCartItems.Count == 0)
+
+            if (!_shoppingCart.ShoppingCartItems.Any())
             {
                 ModelState.AddModelError("", "Your card is empty, add some products first");
             }
 
             if (ModelState.IsValid)
             {
-                if (missingItemsList != null)
-                {
-                    TempData["missingItemsList"] = JsonConvert.SerializeObject(missingItemsList);
-                    TempData["ClientId"] = order.ClientId;
-                    return RedirectToAction("CheckoutConfirmation");
-                }
-                _orderRepository.CreateOrder(order);
+
+                //if (_orderRepository.CreateOrderAsync(order).IsCompletedSuccessfully)
+                //{
+                //    _shoppingCart.ClearCart();
+                //    return RedirectToAction("CheckoutComplete");
+                //}
+                await _orderRepository.CreateOrderAsync(order);
                 _shoppingCart.ClearCart();
                 return RedirectToAction("CheckoutComplete");
             }
@@ -121,30 +105,24 @@ namespace MagazynApp.Controllers
             return View(order);
         }
         [HttpGet]
-        public IActionResult CheckoutConfirmation()
+        public IActionResult CheckoutConfirmation(List<MissingOrderedProduct> missingItemsList)
         {
-            if(TempData["missingItemsList"] is string s)
+            List<MissingOrderedProductViewModel> _missingItemsList = new List<MissingOrderedProductViewModel>();
+            foreach (var item in missingItemsList)
             {
-                var missingItems = JsonConvert.DeserializeObject<List<MissingOrderedProduct>>(s);
-                List<MissingOrderedProductViewModel> missingItemsList = new List<MissingOrderedProductViewModel>();
-                foreach(var item in missingItems)
+                var missingItem = new MissingOrderedProductViewModel()
                 {
-                    var missingItem = new MissingOrderedProductViewModel()
-                    {
-                        ProductName = _productRepository.FindProductByIdAsync(item.ProductId).Result.Name,
-                        ProductAmount = item.ProductAmount,
-                        OrderedAmount = item.OrderedAmount,
-                        MissingAmount = item.MissingAmount
-                    };
-                    missingItemsList.Add(missingItem);
-                }
-                TempData["missingItemsList"] = JsonConvert.SerializeObject(missingItems);
-                return View(missingItemsList);
+                    ProductName = _productRepository.FindProductByIdAsync(item.ProductId).Result.Name,
+                    ProductAmount = item.ProductAmount,
+                    OrderedAmount = item.OrderedAmount,
+                    MissingAmount = item.MissingAmount
+                };
+                _missingItemsList.Add(missingItem);
             }
-            return View();
+            return View("CheckoutConfirmation", _missingItemsList);
         }
         [HttpPost]
-        public async Task<IActionResult> CheckoutConfirmation(Order order)
+        public async Task<IActionResult> CheckoutConfirmation(Order order, List<MissingOrderedProduct> missingItemsList)
         {
             order.ClientId = int.Parse(TempData["ClientId"].ToString());
 
@@ -152,17 +130,13 @@ namespace MagazynApp.Controllers
             _shoppingCart.ShoppingCartItems = items;
             if (ModelState.IsValid)
             {
-                _orderRepository.CreateOrder(order);
-                if (TempData["missingItemsList"] is string s)
+                await _orderRepository.CreateOrderAsync(order);
+                foreach (var item in missingItemsList)
                 {
-                    var missingItems = JsonConvert.DeserializeObject<List<MissingOrderedProduct>>(s);
-                    foreach (var item in missingItems)
-                    {
-                        item.OrderId = order.Id;
-                        _context.MissingOrderedProduct.Add(item);
-                    }
-                   await _context.SaveChangesAsync();
+                    item.OrderId = order.Id;
+                    _context.MissingOrderedProduct.Add(item);
                 }
+                await _context.SaveChangesAsync();
 
                 _shoppingCart.ClearCart();
                 return RedirectToAction("CheckoutComplete");
@@ -183,34 +157,14 @@ namespace MagazynApp.Controllers
             {
                 return NotFound();
             }
-            Dictionary<int, int> compStock = new Dictionary<int, int>();
 
             var order = await _orderRepository.FindOrderByIdAsync(orderId);
 
             if (order.StateId == 1)
             {
-                foreach (var detail in order.OrderLines)
-                {
-                    var product = await _productRepository.FindProductByIdAsync(detail.ProductId);
-                    compStock.Add(product.Quantity, detail.Quantity);
-                }
-                if (!CheckStock(compStock))
-                {
-                    ModelState.AddModelError("", "Brak wystarczającej ilości produktów");
-                    TempData["StockError"]= "Brak wystarczającej ilości produktów!";
-                }
-                else
-                {
-                    foreach (var detail in order.OrderLines)
-                    {
-                        var product = await _productRepository.FindProductByIdAsync(detail.ProductId);
-                        var productStock = product.Quantity - detail.Quantity;
-                        await _productRepository.SetAmountAsync(product.Id, productStock);
-                    }
-                    await _orderStateRepository.ChangeState(order.Id, 2);
 
-                }
-
+                await _orderStateRepository.ChangeStateAsync(order, 2);
+                return RedirectToAction("Index");
             }
             return RedirectToAction("Index");
         }
@@ -220,22 +174,11 @@ namespace MagazynApp.Controllers
             await _orderRepository.DeleteOrder(id);
             return RedirectToAction("Index");
         }
-        private bool CheckStock(Dictionary<int, int> compStock)
-        {
-            foreach (var detail in compStock)
-            {
-                if (detail.Key < detail.Value)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
 
         [HttpGet]
         public IActionResult MissingProducts()
         {
-            var missingItems =  _context.MissingOrderedProduct;
+            var missingItems = _context.MissingOrderedProduct;
             List<MissingOrderedProductViewModel> missingItemsList = new List<MissingOrderedProductViewModel>();
             foreach (var item in missingItems)
             {

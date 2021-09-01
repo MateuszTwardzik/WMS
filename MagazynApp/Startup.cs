@@ -72,7 +72,7 @@ namespace MagazynApp
             {
                 // Cookie settings
                 options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(50);
 
                 options.LoginPath = "/Identity/Account/Login";
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
@@ -81,9 +81,11 @@ namespace MagazynApp
 
 
 
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+           // services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.AddScoped(sp => ShoppingCart.GetCart(sp));
+
             services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IProductTypeRepository, ProductTypeRepository>();
@@ -117,6 +119,10 @@ namespace MagazynApp
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute(
+                    name: "CheckoutConfirmation",
+                    pattern: "{controller=Orders}/{action=CheckoutConfirmation}"
+                    );
                 endpoints.MapRazorPages();
             });
         }
