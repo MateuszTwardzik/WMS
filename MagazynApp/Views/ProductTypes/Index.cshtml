@@ -1,43 +1,92 @@
 ﻿@model IEnumerable<MagazynApp.ViewModel.ProductTypeViewModel>
 
 @{
-    ViewData["Title"] = "Rodzaje Produktów";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/AdminLTE/_Layout.cshtml";
 }
 
-<h1>Rodzaje Produktów</h1>
+<head>
+    <meta name="viewport" content="width=device-width" />
+</head>
 
-<p>
-    <a asp-action="Create">Dodaj</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Nazwa
-            </th>
-            <th>
-                Ilość produktów
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edytuj</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Szczegóły</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Usuń</a>
-            </td>
 
-        </tr>
-}
-    </tbody>
-</table>
+
+<body>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <a class="btn btn-block btn-outline-info" asp-action="Create">Dodaj rodzaj produktu</a>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Rodzaje produktów</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Nazwa</th>
+                                        <th>Ilośc</th>
+                                        <th>Akcje</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Quantity)
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <form asp-action="Edit" asp-controller="ProductTypes" method="get">
+                                                    <input value="@item.Id" type="hidden" name="id" />
+                                                    <button class="btn-outline-primary btn-xs mr-1" type="submit">Edytuj</button>
+                                                </form>
+                                                <form asp-action="Details" asp-controller="ProductTypes" method="get">
+                                                    <input value="@item.Id" type="hidden" name="id" />
+                                                    <button class="btn-outline-info btn-xs mr-1" type="submit">Szczegóły</button>
+                                                </form>
+                                                <form asp-action="Delete" asp-controller="ProductTypes">
+                                                    <input value="@item.Id" type="hidden" name="id" />
+                                                    <button class="btn-outline-danger btn-xs mr-1" type="submit">Usuń</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    <script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+    </script>
+</body>

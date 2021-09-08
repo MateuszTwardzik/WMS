@@ -9,6 +9,9 @@
     <None Include="wwwroot\images\group.png" />
     <None Include="wwwroot\images\l.png" />
     <None Include="wwwroot\images\m.png" />
+    <None Include="wwwroot\lib\datatables\js\jquery.dataTables.js" />
+    <None Include="wwwroot\lib\datatables\js\jquery.dataTables.min.js" />
+    <None Include="wwwroot\lib\datatables\js\jquery.js" />
   </ItemGroup>
 
   <ItemGroup>

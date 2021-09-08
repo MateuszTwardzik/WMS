@@ -18,16 +18,21 @@ namespace MagazynApp.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly MagazynContext _context;
         private readonly ILogger<HomeController> _logger;
         private readonly IProductRepository _productRepository;
         private readonly IProductTypeRepository _productTypeRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        public HomeController(ILogger<HomeController> logger, MagazynContext context, IProductRepository productRepository, IProductTypeRepository productTypeRepository)
+        public HomeController(ILogger<HomeController> logger, MagazynContext context,
+            IProductRepository productRepository,
+            IProductTypeRepository productTypeRepository,
+            IOrderRepository orderRepository)
+
         {
             _logger = logger;
             _productRepository = productRepository;
             _productTypeRepository = productTypeRepository;
+            _orderRepository = orderRepository;
         }
 
         //public IActionResult Index()
@@ -37,38 +42,58 @@ namespace MagazynApp.Controllers
         //}
         public async Task<IActionResult> Index()
         {
-            // ViewBag.products_number = _context.Product.Count().ToString();
-            ViewBag.products_number = _productRepository.GetProducts().Count().ToString();
-            //ViewBag.users_number = _context.User.Count();
 
-            var products = _productRepository.GetProducts();
+            var products = _productRepository.GetProducts().ToList();
+            var orders = await _orderRepository.OrdersToListAsync();
 
-            var typeName = _productTypeRepository.ProductTypesToList();
-
-            var lstModel = new List<ProductsChartViewModel>();
-            var typeList = new List<string>();
-            var productList = new Dictionary<string, int>();
-
-            foreach (var type in typeName)
-            {
-                typeList.Add(type.Name);
-            }
-            
-            foreach(var type in typeList)
-            {
-               productList.Add(type, products.Where(p => p.Type.Name.Equals(type)).Count());
-            }
+            ViewBag.products_number = products.Count().ToString();
 
 
-            foreach (var product in productList)
-            {
-                lstModel.Add(new ProductsChartViewModel
+            var productTypePieChart = products
+                .GroupBy(p => p.Type.Name)
+                .Select(p => new ProductsChartViewModel()
                 {
-                    Name = product.Key,
-                    Quantity = product.Value
-                }); ;
-            }
-            return View(lstModel);
+                    Name = p.Key,
+                    Quantity = p.Count()
+                })
+                .OrderBy(p => p.Name);
+
+            var countedOrdersByDate = orders
+                .GroupBy(o => o.OrderDate)
+                .Select(o => new OrderLineChartViewModel()
+                {
+                    OrderDate = o.Key.ToShortDateString(),
+                    Quantity = o.Count()
+                })
+                .OrderBy(o => o.OrderDate);
+
+            DateTime StartDate = orders.Min(o => o.OrderDate);
+            DateTime EndDate = DateTime.Now;
+            
+            var dates = Enumerable.Range(0, (EndDate - StartDate).Days + 1)
+                .Select(day => StartDate.AddDays(day));
+
+
+            var DatesWithOutOrders = dates.Select(d => new OrderLineChartViewModel()
+            {
+                OrderDate = d.ToShortDateString(),
+                Quantity = 0
+            });
+
+
+            var orderLineChart = from noOrder in DatesWithOutOrders
+                    join order in countedOrdersByDate
+                    on noOrder.OrderDate equals order.OrderDate into dateGroup
+                    from item in dateGroup.DefaultIfEmpty(new OrderLineChartViewModel { OrderDate = noOrder.OrderDate, Quantity = 0 })
+                    select new OrderLineChartViewModel { OrderDate = noOrder.OrderDate, Quantity = item.Quantity };
+
+            HomeChartsViewModel charts = new HomeChartsViewModel()
+            {
+                ProductTypesPieChart = productTypePieChart,
+                OrderLineChart = orderLineChart
+            };
+
+            return View(charts);
         }
 
         public IActionResult Privacy()

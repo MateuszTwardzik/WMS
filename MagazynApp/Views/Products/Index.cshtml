@@ -1,140 +1,150 @@
-﻿@model PaginatedList<MagazynApp.Models.Product>
-
+﻿@model List<MagazynApp.Models.Product>
 
 @{
     ViewData["Title"] = "Index";
-}
+    Layout = "~/Views/Shared/AdminLTE/_Layout.cshtml";
 
-@{
-    Layout = "_Layout";
 }
 
 <head>
     <meta name="viewport" content="width=device-width" />
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#simpledialog").click(function () {
-                $("#dialogbox").dialog();
+</head>
+
+<h1>@TempData["Message"]</h1>
+
+<body>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <a class="btn btn-block btn-outline-info" asp-action="Create">Dodaj nowy produkt</a>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Produkty</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Nazwa</th>
+                                        <th>Ilość</th>
+                                        <th>Cena</th>
+                                        <th>Typ</th>
+                                        <th>Akcje</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Name)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Quantity)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Price)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Type.Name)
+                                            </td>
+                                            <td>
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="btn-group mb-2">
+                                                            <a class="btn-outline-primary btn-sm mr-2" asp-action="Edit" asp-route-id="@item.Id">Edytuj</a>
+                                                            <a class="btn-outline-info btn-sm mr-2" asp-action="Details" asp-route-id="@item.Id">Szczegóły</a>
+                                                            <a class="btn-outline-danger btn-sm mr-2" asp-action="Delete" asp-route-id="@item.Id">Usuń</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="btn-group">
+                                                            <form asp-controller="ShoppingCart" asp-action="AddToShoppingCart">
+                                                                <div class="input-group">
+                                                                    <input value="@item.Id" name="productId" type="hidden" />
+                                                                    <input value="1" name="amount" class="form-control rounded-0">
+                                                                    <span class="input-group-append">
+                                                                        <button type="submit" class="btn btn-info btn-xs">Dodaj do koszyka</button>
+                                                                    </span>
+                                                                </div>
+                                                            </form>
+                                                            <form asp-controller="Supplies" asp-action="CreateSupply">
+                                                                <div class="input-group ml-3">
+                                                                    <input value="@item.Id" name="productId" type="hidden" />
+                                                                    <input value="1" name="amount" class="form-control rounded-0">
+                                                                    <span class="input-group-append">
+                                                                        <button type="submit" class="btn btn-info btn-xs">Uzupełnij</button>
+                                                                    </span>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    <script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
             });
         });
     </script>
-</head>
+</body>
 
+@*@{
+        var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+        var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+    }*@
 
+@*<footer class="border-top footer text-muted">
+        <div id="container">
+            <div id="left">
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-pageNumber="@(Model.PageIndex - 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn btn-default @prevDisabled">
+                    Previous
+                </a>
+            </div>
 
-<h1>
-    Produkty
-    @TempData["Message"]
-</h1>
+            <div id="center">@(Model.PageIndex) - @(Model.TotalPages)</div>
 
-<p>
-    <a class="btn-smallblack" style="width:450px" asp-action="Create">Dodaj nowy produkt</a>
-</p>
-<div>
-    <p>
-        Wybierz ilość elementów:
-        <a class="btn-smallblack" asp-controller="Products" asp-action="Index" asp-route-setPageSize="set10">10</a>
-        <a class="btn-smallblack" asp-controller="Products" asp-action="Index" asp-route-setPageSize="set20">20</a>
-        <a class="btn-smallblack" asp-controller="Products" asp-action="Index" asp-route-setPageSize="set100">100</a>
-        <a class="btn-smallblack" asp-controller="Products" asp-action="Index" asp-route-setPageSize="setAll">Wszystkie</a>
-    </p>
-</div>
-<form asp-controller="Products" asp-action="Index" method="get">
-    <p style="font-size:16px">
-        Znajdz po nazwie: <input id="text-black" type="text" name="searchString" />
-        <input class="btn-black" style="position:absolute; margin-left: 20px; margin-top: -5px;" type="submit" value="Filtruj" />
-    </p>
-</form>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                <a style="color: black" asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Nazwa</a>
-            </th>
-            <th>
-                <a style="color: black" asp-action="Index" asp-route-sortOrder="@ViewData["QuantitySortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Ilosc</a>
-            </th>
-            <th>
-                <a style="color: black" asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Cena</a>
-            </th>
-            <th>
-                <a style="color: black" asp-action="Index" asp-route-sortOrder="@ViewData["TypeSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Typ</a>
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Quantity)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Price)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Type.Name)
-                </td>
-                <td>
-                    <a style="color: black" asp-action="Edit" asp-route-id="@item.Id">Edytuj</a> |
-                    <a style="color: black" asp-action="Details" asp-route-id="@item.Id">Szczegóły</a> |
-                    <a style="color: black" asp-action="Delete" asp-route-id="@item.Id">Usuń</a> |
-                    <form asp-controller="ShoppingCart" asp-action="AddToShoppingCart">
-                        <div>
-                            <input value="@item.Id" name="productId" type="hidden" />
-                            <input value="1" name="amount" style="background: lightgrey" />
-                            <button type="submit" style="background: white">Dodaj do koszyka</button>
-                        </div>
-                    </form>
-                    <form asp-controller="Supplies" asp-action="CreateSupply">
-                        <div>
-                            <input value="@item.Id" name="productId" type="hidden" />
-                            <input value="1" name="amount" style="background: lightgrey" />
-                            <button type="submit" style="background: white">Uzupełnij</button>
-                        </div>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-@{
-    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
-    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
-}
-
-<footer class="border-top footer text-muted">
-    <div id="container">
-        <div id="left">
-            <a asp-action="Index"
-               asp-route-sortOrder="@ViewData["CurrentSort"]"
-               asp-route-pageNumber="@(Model.PageIndex - 1)"
-               asp-route-currentFilter="@ViewData["CurrentFilter"]"
-               class="btn btn-default @prevDisabled">
-                Previous
-            </a>
+            <div id="right">
+                <a asp-action="Index"
+                   asp-route-sortOrder="@ViewData["CurrentSort"]"
+                   asp-route-pageNumber="@(Model.PageIndex + 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn btn-default @nextDisabled">
+                    Next
+                </a>
+            </div>
         </div>
-
-        <div id="center">@(Model.PageIndex) - @(Model.TotalPages)</div>
-
-        <div id="right">
-            <a asp-action="Index"
-               asp-route-sortOrder="@ViewData["CurrentSort"]"
-               asp-route-pageNumber="@(Model.PageIndex + 1)"
-               asp-route-currentFilter="@ViewData["CurrentFilter"]"
-               class="btn btn-default @nextDisabled">
-                Next
-            </a>
-        </div>
-    </div>
-</footer>
+    </footer>*@
 

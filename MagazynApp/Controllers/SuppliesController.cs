@@ -1,6 +1,7 @@
 ﻿using MagazynApp.Data;
 using MagazynApp.Data.Interfaces;
 using MagazynApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,17 +12,14 @@ using System.Threading.Tasks;
 
 namespace MagazynApp.Controllers
 {
+    [Authorize]
     public class SuppliesController : Controller
     {
 
-        private readonly MagazynContext _context;
-        private readonly IProductRepository _productRepository;
         private readonly ISupplyRepository _supplyRepository;
 
-        public SuppliesController(MagazynContext context, IProductRepository productRepository, ISupplyRepository supplyRepository)
+        public SuppliesController(ISupplyRepository supplyRepository)
         {
-            _context = context;
-            _productRepository = productRepository;
             _supplyRepository = supplyRepository;
         }
         [HttpGet]

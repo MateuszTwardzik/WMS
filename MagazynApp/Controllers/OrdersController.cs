@@ -11,6 +11,7 @@ using MagazynApp.Data.Interfaces;
 using MagazynApp.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
+using MagazynApp.Exceptions;
 
 namespace MagazynApp.Controllers
 {
@@ -91,15 +92,18 @@ namespace MagazynApp.Controllers
 
             if (ModelState.IsValid)
             {
+                try
+                {
+                    await _orderRepository.CreateOrderAsync(order);
+                    _shoppingCart.ClearCart();
+                    return RedirectToAction("CheckoutComplete");
+                    
+                }
+                catch (MissingOrderItemsException)
+                {
+                    return RedirectToAction("CheckoutFail");
+                }
 
-                //if (_orderRepository.CreateOrderAsync(order).IsCompletedSuccessfully)
-                //{
-                //    _shoppingCart.ClearCart();
-                //    return RedirectToAction("CheckoutComplete");
-                //}
-                await _orderRepository.CreateOrderAsync(order);
-                _shoppingCart.ClearCart();
-                return RedirectToAction("CheckoutComplete");
             }
 
             return View(order);
@@ -121,28 +125,10 @@ namespace MagazynApp.Controllers
             }
             return View("CheckoutConfirmation", _missingItemsList);
         }
-        [HttpPost]
-        public async Task<IActionResult> CheckoutConfirmation(Order order, List<MissingOrderedProduct> missingItemsList)
+
+        public IActionResult CheckoutFail()
         {
-            order.ClientId = int.Parse(TempData["ClientId"].ToString());
-
-            var items = _shoppingCart.GetShoppingCartItems();
-            _shoppingCart.ShoppingCartItems = items;
-            if (ModelState.IsValid)
-            {
-                await _orderRepository.CreateOrderAsync(order);
-                foreach (var item in missingItemsList)
-                {
-                    item.OrderId = order.Id;
-                    _context.MissingOrderedProduct.Add(item);
-                }
-                await _context.SaveChangesAsync();
-
-                _shoppingCart.ClearCart();
-                return RedirectToAction("CheckoutComplete");
-            }
-
-            return View(order);
+            return View();
         }
 
         public IActionResult CheckoutComplete()

@@ -62,6 +62,7 @@ namespace MagazynApp.Controllers
             return View(client);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)

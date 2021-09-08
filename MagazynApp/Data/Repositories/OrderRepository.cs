@@ -66,7 +66,7 @@ namespace MagazynApp.Data.Repositories
             catch (MissingOrderItemsException)
             {
                 transaction.Rollback();
-
+                throw;
             }
 
         }

@@ -1,8 +1,14 @@
 ﻿@model List<Microsoft.AspNetCore.Identity.IdentityRole>
 @{
     ViewData["Title"] = "Role Manager";
-    Layout = "_Layout";
+    Layout = "~/Views/Shared/AdminLTE/_Layout.cshtml";
 }
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
 
 <h1>Role Manager</h1>
 <form method="post" asp-action="AddRole" asp-controller="RoleManager">
@@ -23,18 +29,18 @@
     <tbody>
         @foreach (var role in Model)
         {
-        <tr>
-            <td>@role.Id</td>
-            <td>@role.Name</td>
-            <td><a style="color: black" asp-controller="RoleManager" asp-action="DeleteRole" asp-route-roleId="@role.Id">X</a></td>
-            <td>
-                <form method="post" asp-action="DeleteRole" asp-controller="RoleManager">
-                    <input value="@role.Id" type="hidden" name="roleId" />
-                    <button type="submit">Delete</button>
-                </form>
-            </td>
-            @*<td><a style="color: black" asp-controller="RoleManager" asp-action="DeleteRole" asp-route-roleId="@role.Id" >X</a></td>*@
-        </tr>
+            <tr>
+                <td>@role.Id</td>
+                <td>@role.Name</td>
+                <td><a style="color: black" asp-controller="RoleManager" asp-action="DeleteRole" asp-route-roleId="@role.Id">X</a></td>
+                <td>
+                    <form method="post" asp-action="DeleteRole" asp-controller="RoleManager">
+                        <input value="@role.Id" type="hidden" name="roleId" />
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+                @*<td><a style="color: black" asp-controller="RoleManager" asp-action="DeleteRole" asp-route-roleId="@role.Id" >X</a></td>*@
+            </tr>
         }
     </tbody>
 </table>

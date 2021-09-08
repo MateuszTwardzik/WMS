@@ -1,20 +1,23 @@
 ﻿@model Order
 
-<div class="row orderForm ">
-    <form asp-action="Checkout" method="post" class="form-horizontal" role="form">
-        <h3 class="text-center">Wybór klienta</h3>
-        <div class="form-group">
-            <label asp-for="ClientId" class="control-label"></label>
-            <select asp-for="ClientId" class="form-control" asp-items="ViewBag.ClientId"></select>
-        </div>
-
-
-        <div class="form-group">
-            <div class="btn-group col-md-offset-2 col-md-8">
-                <input class="btn btn-success" type="submit" value="Complete order" />
-                @*<input class="btn btn-default" type="submit" value="Return " />*@
+    <head>
+        <meta name="viewport" content="width=device-width" />
+    </head>
+    <div class="row orderForm ">
+        <form asp-action="Checkout" method="post" class="form-horizontal" role="form">
+            <h3 class="text-center">Wybór klienta</h3>
+            <div class="form-group">
+                <label asp-for="ClientId" class="control-label"></label>
+                <select asp-for="ClientId" class="form-control" asp-items="ViewBag.ClientId"></select>
             </div>
-        </div>
 
-    </form>
-</div>
+
+            <div class="form-group">
+                <div class="btn-group col-md-offset-2 col-md-8">
+                    <input class="btn btn-success" type="submit" value="Complete order" />
+                    @*<input class="btn btn-default" type="submit" value="Return " />*@
+                </div>
+            </div>
+
+        </form>
+    </div>

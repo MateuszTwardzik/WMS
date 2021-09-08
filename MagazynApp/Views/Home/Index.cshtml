@@ -1,12 +1,15 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/AdminLTE/_Layout.cshtml";
 }
 @using System.Linq;
-@model List<MagazynApp.ViewModel.ProductsChartViewModel>
+@model MagazynApp.ViewModel.HomeChartsViewModel
 @{
-    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.Name).ToList());
-    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.Quantity).ToList());
-    ViewData["Title"] = "Pie Chart";
+    var PieX = Newtonsoft.Json.JsonConvert.SerializeObject(Model.ProductTypesPieChart.Select(x => x.Name).ToList());
+    var PieY = Newtonsoft.Json.JsonConvert.SerializeObject(Model.ProductTypesPieChart.Select(x => x.Quantity).ToList());
+    var LineX = Newtonsoft.Json.JsonConvert.SerializeObject(Model.OrderLineChart.Select(x => x.OrderDate).ToList());
+    var LineY = Newtonsoft.Json.JsonConvert.SerializeObject(Model.OrderLineChart.Select(x => x.Quantity).ToList());
+
 }
 
 <!DOCTYPE html>
@@ -19,26 +22,84 @@
         Witaj w magazynie
     </h1>
     <p>Magazyn zawiera @ViewBag.products_number rodzajów produktów</p>
-    @*<p>Do magazynu ma dostep @ViewBag.users_number użytkowników</p>*@
 
 </div>
 
-<div class="box-body">
-    <div class="chart-container">
-        <canvas id="chart" style="width:100%; height:500px"></canvas>
-    </div>
-</div>
+@*<div class="box-body">
+        <div class="chart-container">
+            <canvas id="chart" style="width:100%; height:500px"></canvas>
+        </div>
+    </div>*@
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
-    <script type="text/javascript">
+
+
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <!-- PIE CHART -->
+                <div class="card card-danger">
+                    <div class="card-header">
+                        <h3 class="card-title">Rordzaje produktów</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="ProductTypeChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!--right col-->
+            <div class="col-md-6">
+                <!-- LINE CHART -->
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">Zamówienia wychodzące</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart">
+                            <canvas id="OrderLineChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+<script type="text/javascript">
 
             $(function () {
-        var chartName = "chart";
+        var chartName = "ProductTypeChart";
             var ctx = document.getElementById(chartName).getContext('2d');
             var data = {
-                    labels: @Html.Raw(XLabels),
+                    labels: @Html.Raw(PieX),
                     datasets: [{
                         label: "Products Chart",
                         backgroundColor: [
@@ -70,7 +131,7 @@
                             'rgba(255, 0, 255)'
                         ],
                         borderWidth: 1,
-                        data: @Html.Raw(YValues)
+                        data: @Html.Raw(PieY)
         }]
                 };
 
@@ -82,5 +143,33 @@
 
                 });
             });
-    </script>
+
+</script>
+
+<script type="text/javascript">
+
+            $(function () {
+        var chartName = "OrderLineChart";
+            var ctx = document.getElementById(chartName).getContext('2d');
+            var data = {
+            labels: @Html.Raw(LineX),
+            datasets: [{
+            data: @Html.Raw(LineY),
+            label: 'Zamówienia',
+            fill: false,
+
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+        }]
+    };
+
+
+           var myChart = new  Chart(ctx, {
+                    data: data,
+                    type:'line'
+
+                });
+            });
+
+</script>
 

@@ -1,54 +1,99 @@
 ﻿@model MagazynApp.ViewModel.ShoppingCartViewModel
 
-<div>
-    <h2 style="text-align:center">Twój koszyk</h2>
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Selected amount</th>
-                <th>Product</th>
-                <th class="text-right">Price</th>
-                <th class="text-right">Subtotal</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var line in Model.ShoppingCart.ShoppingCartItems)
-            {
-                <tr>
-                    <td class="text-center">@line.Amount</td>
-                    <td class="text-left">@line.Product.Name</td>
-                    <td class="text-right">@line.Product.Price.ToString("c")</td>
-                    <td class="text-right">
-                        @((line.Amount * line.Product.Price).ToString("c"))
-                    </td>
-                    <td class="text-center"><a class="glyphicon glyphicon-remove text-danger remove" asp-controller="ShoppingCart" asp-action="RemoveFromShoppingCart" asp-route-productId="@line.Product.Id">X</a></td>
-                </tr>
-            }
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="3" class="text-right">Total:</td>
-                <td class="text-right">
-                    @Model.ShoppingCartTotal.ToString("c")
-                </td>
-            </tr>
-        </tfoot>
-    </table>
+<head>
+    <meta name="viewport" content="width=device-width" />
 
-    <div class="text-right">
-        <div class="btn-group ">
-            
-            <a class="btn-group">
-                <a class="btn btn-default" asp-controller="Products" asp-action="Index">
-                    Dodaj wiecej produktów
-                </a>
-                <a class="btn btn-success" asp-controller="Orders" asp-action="Checkout">Check out</a>
-                @*<ul class="dropdown-menu" role="menu">
-            <li><a asp-controller="Product" asp-action="List" asp-route-category="Alcoholic">Alcoholic</a></li>
-            <li><a asp-controller="Product" asp-action="List" asp-route-category="Non-alcoholic">Non Alcoholic</a></li>
-        </ul>*@
-            </a>
+</head>
+
+
+
+<body>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Twój koszyk</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="example2" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Selected amount</th>
+                                        <th>Product</th>
+                                        <th class="text-right">Price</th>
+                                        <th class="text-right">Subtotal</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var line in Model.ShoppingCart.ShoppingCartItems)
+                                    {
+                                        <tr>
+                                            <td class="text-center">@line.Amount</td>
+                                            <td class="text-left">@line.Product.Name</td>
+                                            <td class="text-right">@line.Product.Price.ToString("c")</td>
+                                            <td class="text-right">
+                                                @((line.Amount * line.Product.Price).ToString("c"))
+                                            </td>
+                                            <td class="text-center"><a class="glyphicon glyphicon-remove text-danger remove" asp-controller="ShoppingCart" asp-action="RemoveFromShoppingCart" asp-route-productId="@line.Product.Id">X</a></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-right">Total:</td>
+                                        <td class="text-right">
+                                            @Model.ShoppingCartTotal.ToString("c")
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            <div class="text-right">
+                                <div class="btn-group-vertical" style="width:60%">
+                                    <a class="btn btn-block btn-outline-info" asp-controller="Products" asp-action="Index">Dodaj wiecej produktów</a>
+                                    <a class="btn btn-block btn-outline-success" asp-controller="Orders" asp-action="Checkout">Złóż zamówienie</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+            </div>
+            @*<div class="text-right">
+                <div class="btn-group-vertical">
+
+                    <button onclick="window.location.href='/Products/Index'" type="submit" class="btn btn-block btn-outline-info">Dodaj wiecej produktów</button>
+                    <button onclick="window.location.href='/Orders/Checkout'" type="submit" class="btn btn-block btn-outline-success">Złóż zamówienie</button>
+
+                    <a class="btn btn-block btn-outline-info" asp-controller="Products" asp-action="Index">Dodaj wiecej produktów</a>
+                    <a class="btn btn-block btn-outline-success" asp-controller="Orders" asp-action="Checkout">Złóż zamówienie</a>
+                </div>
+            </div>*@
+            <!-- /.row -->
         </div>
-    </div>
-</div>
+        <!-- /.container-fluid -->
+    </section>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    <script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+    </script>
+</body>
+
