@@ -42,7 +42,6 @@ namespace MagazynApp.Controllers
         //}
         public async Task<IActionResult> Index()
         {
-
             var products = _productRepository.GetProducts().ToList();
             var orders = await _orderRepository.OrdersToListAsync();
 
@@ -67,25 +66,26 @@ namespace MagazynApp.Controllers
                 })
                 .OrderBy(o => o.OrderDate);
 
-            DateTime StartDate = orders.Min(o => o.OrderDate);
-            DateTime EndDate = DateTime.Now;
-            
-            var dates = Enumerable.Range(0, (EndDate - StartDate).Days + 1)
-                .Select(day => StartDate.AddDays(day));
+            var startDate = orders.Min(o => o.OrderDate);
+            var endDate = DateTime.Now;
+
+            var dates = Enumerable.Range(0, (endDate - startDate).Days + 1)
+                .Select(day => startDate.AddDays(day));
 
 
-            var DatesWithOutOrders = dates.Select(d => new OrderLineChartViewModel()
+            var datesWithOutOrders = dates.Select(d => new OrderLineChartViewModel()
             {
                 OrderDate = d.ToShortDateString(),
                 Quantity = 0
             });
 
 
-            var orderLineChart = from noOrder in DatesWithOutOrders
-                    join order in countedOrdersByDate
+            var orderLineChart = from noOrder in datesWithOutOrders
+                join order in countedOrdersByDate
                     on noOrder.OrderDate equals order.OrderDate into dateGroup
-                    from item in dateGroup.DefaultIfEmpty(new OrderLineChartViewModel { OrderDate = noOrder.OrderDate, Quantity = 0 })
-                    select new OrderLineChartViewModel { OrderDate = noOrder.OrderDate, Quantity = item.Quantity };
+                from item in dateGroup.DefaultIfEmpty(new OrderLineChartViewModel
+                    {OrderDate = noOrder.OrderDate, Quantity = 0})
+                select new OrderLineChartViewModel {OrderDate = noOrder.OrderDate, Quantity = item.Quantity};
 
             HomeChartsViewModel charts = new HomeChartsViewModel()
             {
@@ -100,10 +100,11 @@ namespace MagazynApp.Controllers
         {
             return View();
         }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
     }
 }

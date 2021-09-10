@@ -20,6 +20,10 @@ namespace MagazynApp.Data
         public DbSet<MissingOrderedProduct> MissingOrderedProduct { get; set; }
         public DbSet<Supply> Supply { get; set; }
         public DbSet<SupplyState> SupplyState { get; set; }
+        public DbSet<Socket> Socket { get; set; }
+        public DbSet<Shelf> Shelf { get; set; }
+        public DbSet<Alley> Alley { get; set; }
+        public DbSet<Sector> Sector { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -41,15 +45,17 @@ namespace MagazynApp.Data
 
             modelBuilder.Entity<ShoppingCartItem>().HasKey(x => x.ShoppingCartItemId);
 
+            modelBuilder.Entity<Socket>().HasKey(x => x.Id);
 
+            modelBuilder.Entity<Shelf>().HasKey(x => x.Id);
+
+            modelBuilder.Entity<Alley>().HasKey(x => x.Id);
+
+            modelBuilder.Entity<Sector>().HasKey(x => x.Id);
 
             modelBuilder.Entity<Product>().HasOne<ProductType>(pt => pt.Type)
                 .WithMany(p => p.Product)
                 .HasForeignKey(pt => pt.TypeId);
-
-
-
-
 
             modelBuilder.Entity<Order>().HasOne<OrderState>(os => os.State)
                 .WithMany(o => o.Order)
@@ -68,8 +74,6 @@ namespace MagazynApp.Data
                   .HasForeignKey(od => od.OrderId);
 
 
-
-
             modelBuilder.Entity<OrderDetail>().HasOne<Product>(odp => odp.Product)
                 .WithMany(o => o.OrderLines)
                 .HasForeignKey(odp => odp.ProductId);
@@ -79,27 +83,14 @@ namespace MagazynApp.Data
                 .HasForeignKey(odo => odo.OrderId);
 
 
-
-
-
-
             modelBuilder.Entity<Supply>().HasOne<SupplyState>(ss => ss.State)
                 .WithMany(s => s.Supply)
                 .HasForeignKey(ss => ss.StateId);
 
 
-
- 
-
-
-
-
             modelBuilder.Entity<ShoppingCart>().HasMany<ShoppingCartItem>(sdp => sdp.ShoppingCartItems)
                 .WithOne(s => s.ShoppingCart)
                 .HasForeignKey(sdp => sdp.ShoppingCartId);
-
-
-
 
 
             modelBuilder.Entity<MissingOrderedProduct>().HasOne<Product>(odp => odp.Product)
@@ -110,12 +101,17 @@ namespace MagazynApp.Data
                 .WithMany(o => o.MissingOrderedProducts)
                 .HasForeignKey(odp => odp.OrderId);
 
+            modelBuilder.Entity<Socket>().HasOne<Shelf>(s => s.Shelf)
+                .WithMany(s => s.Sockets)
+                .HasForeignKey(s => s.ShelfId);
 
+            modelBuilder.Entity<Shelf>().HasOne<Alley>(s => s.Alley)
+                .WithMany(s => s.Shelves)
+                .HasForeignKey(s => s.AlleyId);
 
-            //modelBuilder.Entity<OrderDetail>().HasOne<Order>(od => od.Order)
-            //    .WithMany(o => o.OrderLines)
-            //    .HasForeignKey(od => od.OrderId);
-
+            modelBuilder.Entity<Alley>().HasOne<Sector>(s => s.Sector)
+                .WithMany(s => s.Alleys)
+                .HasForeignKey(s => s.SectorId);
 
         }
 
