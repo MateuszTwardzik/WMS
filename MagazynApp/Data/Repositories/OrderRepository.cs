@@ -68,7 +68,6 @@ namespace MagazynApp.Data.Repositories
                 transaction.Rollback();
                 throw;
             }
-
         }
 
         public async Task<Order> FindOrderByIdAsync(int? id)
@@ -83,6 +82,7 @@ namespace MagazynApp.Data.Repositories
 
             return order;
         }
+
         public async Task<IList<Order>> OrdersToListAsync()
         {
             var orderList = await _context.Order.Include(o => o.Client).Include(o => o.State).ToListAsync();
@@ -100,13 +100,48 @@ namespace MagazynApp.Data.Repositories
                     var productStock = product.Quantity + detail.Quantity;
                     await _productRepository.SetAmountAsync(product.Id, productStock);
                 }
-
             }
+
             _context.OrderDetail.RemoveRange(order.OrderLines);
 
             _context.Order.Remove(order);
             await _context.SaveChangesAsync();
         }
-    }
 
+        public async Task CompleteOrder(Order order)
+        {
+            var socketList = await FindSocket(order.OrderLines.ToList());
+            foreach (var socket in socketList)
+            {
+                
+            }
+        }
+
+        private async Task<List<SocketProduct>> FindSocket(List<OrderDetail> orderDetails)
+        {
+            var socketList = new List<SocketProduct>();
+            double productSocket = 0;
+
+            foreach (var detail in orderDetails)
+            {
+                while (detail.Quantity < productSocket)
+                {
+                    var socket = await _context.SocketProduct.FirstAsync(s => s.ProductId == detail.ProductId);
+                    if (socket == null)
+                    {
+                        throw new Exception();
+                    }
+
+                    productSocket += socket.Amount;
+                    socketList.Add(socket);
+                }
+            }
+            // while (orderDetails.Sum(o => o.Quantity) > socketList.Sum(s => s.Capacity))
+            // {
+            //     
+            // }
+
+            return socketList;
+        }
+    }
 }

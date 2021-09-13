@@ -7,8 +7,8 @@ namespace MagazynApp.Data
     {
         public MagazynContext(DbContextOptions<MagazynContext> options) : base(options)
         {
-
         }
+
         public DbSet<Client> Client { get; set; }
         public DbSet<Product> Product { get; set; }
         public DbSet<ProductType> ProductType { get; set; }
@@ -24,6 +24,7 @@ namespace MagazynApp.Data
         public DbSet<Shelf> Shelf { get; set; }
         public DbSet<Alley> Alley { get; set; }
         public DbSet<Sector> Sector { get; set; }
+        public DbSet<SocketProduct> SocketProduct { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -46,6 +47,15 @@ namespace MagazynApp.Data
             modelBuilder.Entity<ShoppingCartItem>().HasKey(x => x.ShoppingCartItemId);
 
             modelBuilder.Entity<Socket>().HasKey(x => x.Id);
+            modelBuilder.Entity<SocketProduct>().HasKey(sp => new {sp.SocketId, sp.ProductId});
+            
+            modelBuilder.Entity<SocketProduct>().HasOne<Socket>(sp => sp.Socket)
+                .WithMany(s => s.SocketProduct)
+                .HasForeignKey(sp => sp.SocketId);
+            
+            modelBuilder.Entity<SocketProduct>().HasOne<Product>(sp => sp.Product)
+                .WithMany(s => s.SocketProduct)
+                .HasForeignKey(sp => sp.ProductId);
 
             modelBuilder.Entity<Shelf>().HasKey(x => x.Id);
 
@@ -70,8 +80,8 @@ namespace MagazynApp.Data
                 .HasForeignKey(od => od.OrderId);
 
             modelBuilder.Entity<Order>().HasMany<MissingOrderedProduct>(om => om.MissingOrderedProducts)
-                  .WithOne(o => o.Order)
-                  .HasForeignKey(od => od.OrderId);
+                .WithOne(o => o.Order)
+                .HasForeignKey(od => od.OrderId);
 
 
             modelBuilder.Entity<OrderDetail>().HasOne<Product>(odp => odp.Product)
@@ -112,9 +122,7 @@ namespace MagazynApp.Data
             modelBuilder.Entity<Alley>().HasOne<Sector>(s => s.Sector)
                 .WithMany(s => s.Alleys)
                 .HasForeignKey(s => s.SectorId);
-
+            
         }
-
-
     }
 }

@@ -26,7 +26,7 @@ namespace MagazynApp.Controllers
         private readonly IOrderStateRepository _orderStateRepository;
 
         public OrdersController
-            (IOrderRepository orderRepository,
+        (IOrderRepository orderRepository,
             ShoppingCart shoppingCart,
             IProductRepository productRepository,
             IOrderStateRepository orderStateRepository,
@@ -53,19 +53,7 @@ namespace MagazynApp.Controllers
 
             var order = await _orderRepository.FindOrderByIdAsync(id);
 
-
-            List<OrderDetail> OrderItems = new List<OrderDetail>();
-
-            foreach (var orderDetail in order.OrderLines)
-            {
-                OrderItems.Add(orderDetail);
-            }
-            ViewData["OrderItems"] = OrderItems;
-
-            if (order == null)
-            {
-                return NotFound();
-            }
+            ViewData["OrderItems"] = order.OrderLines.ToList();
 
             return View(order);
         }
@@ -84,7 +72,6 @@ namespace MagazynApp.Controllers
             _shoppingCart.ShoppingCartItems = items;
 
 
-
             if (!_shoppingCart.ShoppingCartItems.Any())
             {
                 ModelState.AddModelError("", "Your card is empty, add some products first");
@@ -97,33 +84,28 @@ namespace MagazynApp.Controllers
                     await _orderRepository.CreateOrderAsync(order);
                     _shoppingCart.ClearCart();
                     return RedirectToAction("CheckoutComplete");
-                    
                 }
                 catch (MissingOrderItemsException)
                 {
                     return RedirectToAction("CheckoutFail");
                 }
-
             }
 
             return View(order);
         }
+
         [HttpGet]
         public IActionResult CheckoutConfirmation(List<MissingOrderedProduct> missingItemsList)
         {
-            List<MissingOrderedProductViewModel> _missingItemsList = new List<MissingOrderedProductViewModel>();
-            foreach (var item in missingItemsList)
+            var outMissingItemsList = missingItemsList.Select(item => new MissingOrderedProductViewModel()
             {
-                var missingItem = new MissingOrderedProductViewModel()
-                {
-                    ProductName = _productRepository.FindProductByIdAsync(item.ProductId).Result.Name,
-                    ProductAmount = item.ProductAmount,
-                    OrderedAmount = item.OrderedAmount,
-                    MissingAmount = item.MissingAmount
-                };
-                _missingItemsList.Add(missingItem);
-            }
-            return View("CheckoutConfirmation", _missingItemsList);
+                ProductName = _productRepository.FindProductByIdAsync(item.ProductId).Result.Name,
+                ProductAmount = item.ProductAmount,
+                OrderedAmount = item.OrderedAmount,
+                MissingAmount = item.MissingAmount
+            }).ToList();
+
+            return View("CheckoutConfirmation", outMissingItemsList);
         }
 
         public IActionResult CheckoutFail()
@@ -136,6 +118,7 @@ namespace MagazynApp.Controllers
             ViewBag.CheckoutCompleteMessage = "Zamówienie zostało złozone!";
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> CompleteOrder(int? orderId)
         {
@@ -148,12 +131,13 @@ namespace MagazynApp.Controllers
 
             if (order.StateId == 1)
             {
-
                 await _orderStateRepository.ChangeStateAsync(order, 2);
                 return RedirectToAction("Index");
             }
+
             return RedirectToAction("Index");
         }
+
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
@@ -177,6 +161,7 @@ namespace MagazynApp.Controllers
                 };
                 missingItemsList.Add(missingItem);
             }
+
             return View(missingItemsList);
         }
     }

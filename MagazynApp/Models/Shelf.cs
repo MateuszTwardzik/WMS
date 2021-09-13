@@ -18,12 +18,20 @@ namespace MagazynApp.Models
             {
                 return Sockets.Sum(s => s.Capacity);
             }
+            set
+            {
+                Capacity = Sockets.Sum(s => s.Capacity);
+            }
         }
 
         public double MaxCapacity { 
             get
             {
                 return Sockets.Sum(s => s.MaxCapacity);
+            }
+            set
+            {
+                Capacity = Sockets.Sum(s => s.MaxCapacity);
             }
         }
         public IList<Socket> Sockets { get; set; }

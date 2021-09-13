@@ -10,8 +10,10 @@ namespace MagazynApp.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public double Capacity { get; set; }
-        public double MaxCapacity { get; set; }
+        public double MaxCapacity { get; set; } //160 == 8 kartonow (1 paleta)
         public int ShelfId { get; set; }
         public Shelf Shelf { get; set; }
+        
+        public virtual ICollection<SocketProduct> SocketProduct { get; set; }
     }
 }

@@ -2,14 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using MagazynApp.Data;
-using MagazynApp.Models;
 using MagazynApp.ViewModel;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using MagazynApp.Data.Interfaces;
 
@@ -34,18 +31,13 @@ namespace MagazynApp.Controllers
             _productTypeRepository = productTypeRepository;
             _orderRepository = orderRepository;
         }
-
-        //public IActionResult Index()
-        //{
-
-        //    return View();
-        //}
+        
         public async Task<IActionResult> Index()
         {
             var products = _productRepository.GetProducts().ToList();
             var orders = await _orderRepository.OrdersToListAsync();
 
-            ViewBag.products_number = products.Count().ToString();
+            ViewBag.products_number = products.Count.ToString();
 
 
             var productTypePieChart = products
@@ -71,8 +63,7 @@ namespace MagazynApp.Controllers
 
             var dates = Enumerable.Range(0, (endDate - startDate).Days + 1)
                 .Select(day => startDate.AddDays(day));
-
-
+            
             var datesWithOutOrders = dates.Select(d => new OrderLineChartViewModel()
             {
                 OrderDate = d.ToShortDateString(),
@@ -87,7 +78,7 @@ namespace MagazynApp.Controllers
                     {OrderDate = noOrder.OrderDate, Quantity = 0})
                 select new OrderLineChartViewModel {OrderDate = noOrder.OrderDate, Quantity = item.Quantity};
 
-            HomeChartsViewModel charts = new HomeChartsViewModel()
+            var charts = new HomeChartsViewModel()
             {
                 ProductTypesPieChart = productTypePieChart,
                 OrderLineChart = orderLineChart
