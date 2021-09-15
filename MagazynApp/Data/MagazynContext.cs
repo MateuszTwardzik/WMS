@@ -47,7 +47,8 @@ namespace MagazynApp.Data
             modelBuilder.Entity<ShoppingCartItem>().HasKey(x => x.ShoppingCartItemId);
 
             modelBuilder.Entity<Socket>().HasKey(x => x.Id);
-            modelBuilder.Entity<SocketProduct>().HasKey(sp => new {sp.SocketId, sp.ProductId});
+            modelBuilder.Entity<SocketProduct>().HasKey(x => x.Id);
+            //modelBuilder.Entity<SocketProduct>().HasKey(sp => new {sp.SocketId, sp.ProductId});
             
             modelBuilder.Entity<SocketProduct>().HasOne<Socket>(sp => sp.Socket)
                 .WithMany(s => s.SocketProduct)

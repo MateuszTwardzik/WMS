@@ -31,7 +31,7 @@ namespace MagazynApp.Controllers
             _productTypeRepository = productTypeRepository;
             _orderRepository = orderRepository;
         }
-        
+
         public async Task<IActionResult> Index()
         {
             var products = _productRepository.GetProducts().ToList();
@@ -58,12 +58,18 @@ namespace MagazynApp.Controllers
                 })
                 .OrderBy(o => o.OrderDate);
 
-            var startDate = orders.Min(o => o.OrderDate);
+            var startDate = DateTime.Now;
+            
+            if (orders.Count != 0)
+            {
+                startDate = orders.Min(o => o.OrderDate);
+            }
+
             var endDate = DateTime.Now;
 
             var dates = Enumerable.Range(0, (endDate - startDate).Days + 1)
                 .Select(day => startDate.AddDays(day));
-            
+
             var datesWithOutOrders = dates.Select(d => new OrderLineChartViewModel()
             {
                 OrderDate = d.ToShortDateString(),

@@ -2,6 +2,7 @@
 {
     public class SocketProduct
     {
+        public  int Id { get; set; }
         public int SocketId { get; set; }
         public Socket Socket { get; set; }
         public int ProductId { get; set; }

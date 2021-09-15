@@ -15,8 +15,10 @@ namespace MagazynApp.Data.Repositories
         private readonly ShoppingCart _shoppingCart;
         private readonly IProductRepository _productRepository;
 
-
-        public OrderRepository(MagazynContext context, ShoppingCart shoppingCart, IProductRepository productRepository)
+        public OrderRepository
+        (MagazynContext context,
+            ShoppingCart shoppingCart,
+            IProductRepository productRepository)
         {
             _context = context;
             _shoppingCart = shoppingCart;
@@ -110,38 +112,88 @@ namespace MagazynApp.Data.Repositories
 
         public async Task CompleteOrder(Order order)
         {
-            var socketList = await FindSocket(order.OrderLines.ToList());
-            foreach (var socket in socketList)
+            var socketProductList = await FindSocket(order.OrderLines.ToList());
+            var updateSockets = new List<Socket>();
+            var deleteProductSockets = new List<SocketProduct>();
+            var changedProductSockets = new List<SocketProduct>();
+            var updateProductSockets = new List<SocketProduct>();
+
+            foreach (var detail in order.OrderLines)
             {
-                
+                double temp = detail.Quantity;
+
+                var detailSockets = socketProductList.Where(s => s.ProductId == detail.ProductId)
+                    .OrderBy(s => s.Amount)
+                    .ToList();
+
+
+                foreach (var socket in detailSockets)
+                {
+                    if (temp > socket.Amount)
+                    {
+                        socket.Socket.Capacity -= socket.Amount;
+                        updateSockets.Add(socket.Socket);
+                        temp -= socket.Amount;
+
+                        socket.Amount -= socket.Amount;
+                        changedProductSockets.Add(socket);
+                    }
+                    else
+                    {
+                        socket.Socket.Capacity -= temp;
+                        updateSockets.Add(socket.Socket);
+
+                        socket.Amount -= temp;
+                        changedProductSockets.Add(socket);
+                    }
+                }
             }
+
+            foreach (var changedSocket in changedProductSockets)
+            {
+                if (changedSocket.Amount == 0)
+                {
+                    deleteProductSockets.Add(changedSocket);
+                }
+                else
+                {
+                    updateProductSockets.Add(changedSocket);
+                }
+            }
+
+            _context.UpdateRange(updateSockets);
+            _context.UpdateRange(updateProductSockets);
+            _context.RemoveRange(deleteProductSockets);
+            await _context.SaveChangesAsync();
         }
 
         private async Task<List<SocketProduct>> FindSocket(List<OrderDetail> orderDetails)
         {
-            var socketList = new List<SocketProduct>();
-            double productSocket = 0;
+            var socketProductList = new List<SocketProduct>();
+            var socketList = new List<Socket>();
+
 
             foreach (var detail in orderDetails)
             {
-                while (detail.Quantity < productSocket)
-                {
-                    var socket = await _context.SocketProduct.FirstAsync(s => s.ProductId == detail.ProductId);
-                    if (socket == null)
-                    {
-                        throw new Exception();
-                    }
+                double productSocket = 0;
 
-                    productSocket += socket.Amount;
-                    socketList.Add(socket);
+                var sockets = await _context.SocketProduct
+                    .Include(s => s.Socket)
+                    .Where(s => s.ProductId == detail.ProductId)
+                    .OrderBy(s => s.Amount)
+                    .ToListAsync();
+
+                foreach (var socket in sockets)
+                {
+                    if (productSocket <= detail.Quantity)
+                    {
+                        socketProductList.Add(socket);
+                        productSocket += socket.Amount;
+                    }
                 }
             }
-            // while (orderDetails.Sum(o => o.Quantity) > socketList.Sum(s => s.Capacity))
-            // {
-            //     
-            // }
 
-            return socketList;
+            return socketProductList;
         }
     }
 }

@@ -12,6 +12,8 @@ namespace MagazynApp.Models
         public Sector Sector { get; set; }
         public string Name { get; set; }
 
+        public string FullName => Sector.Name + " " + Name;
+
         public double Capacity
         {
             get { return Shelves.Sum(s => s.Capacity); }

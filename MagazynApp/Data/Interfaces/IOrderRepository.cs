@@ -12,5 +12,6 @@ namespace MagazynApp.Data.Interfaces
         Task<Order> FindOrderByIdAsync(int? id);
         Task<IList<Order>> OrdersToListAsync();
         Task DeleteOrder(int orderId);
+        Task CompleteOrder(Order order); 
     }
 }

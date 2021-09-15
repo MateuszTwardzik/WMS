@@ -38,7 +38,7 @@ namespace MagazynApp.Controllers
             _shoppingCart = shoppingCart;
             _context = context;
         }
-
+        
         public async Task<IActionResult> Index()
         {
             return View(await _orderRepository.OrdersToListAsync());
@@ -131,6 +131,7 @@ namespace MagazynApp.Controllers
 
             if (order.StateId == 1)
             {
+                await _orderRepository.CompleteOrder(order);
                 await _orderStateRepository.ChangeStateAsync(order, 2);
                 return RedirectToAction("Index");
             }

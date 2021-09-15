@@ -11,6 +11,7 @@ namespace MagazynApp.Models
         public int AlleyId { get; set; }
         public Alley Alley { get; set; }
         public string Name { get; set; }
+        public string FullName => Alley.Sector.Name + " " + Alley.Name + " " + Name;
 
         public double Capacity
         {
@@ -18,20 +19,12 @@ namespace MagazynApp.Models
             {
                 return Sockets.Sum(s => s.Capacity);
             }
-            set
-            {
-                Capacity = Sockets.Sum(s => s.Capacity);
-            }
         }
 
         public double MaxCapacity { 
             get
             {
                 return Sockets.Sum(s => s.MaxCapacity);
-            }
-            set
-            {
-                Capacity = Sockets.Sum(s => s.MaxCapacity);
             }
         }
         public IList<Socket> Sockets { get; set; }

@@ -80,18 +80,21 @@ namespace MagazynApp
             });
 
 
-
            // services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddScoped(sp => ShoppingCart.GetCart(sp));
-
-            services.AddTransient<IOrderRepository, OrderRepository>();
+            
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IProductTypeRepository, ProductTypeRepository>();
             services.AddTransient<IClientRepository, ClientRepository>();
+            services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<IOrderStateRepository, OrderStateRepository>();
             services.AddTransient<ISupplyRepository, SupplyRepository>();
+            services.AddTransient<IWarehouseRepository, WarehouseRepository>();
+            
+            services.AddMemoryCache();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
