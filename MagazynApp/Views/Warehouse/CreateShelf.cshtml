@@ -1,0 +1,89 @@
+﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@using MagazynApp.Controllers
+@model Shelf
+@{
+    ViewData["Title"] = "Sectors";
+    Layout = "~/Views/Shared/AdminLTE/_Layout.cshtml";
+
+}
+<head>
+    <meta name="viewport" content="width=device-width"/>
+</head>
+
+<body>
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">Dodaj regał</h3>
+    </div>
+    <!-- /.card-header -->
+    <!-- form start -->
+    <form asp-action="CreateShelf">
+        <div class="card-body">
+            <div class="form-group">
+                <label class="control-label">Sektor</label>
+                <select asp-for="Alley.SectorId" class="form-control" id="sectorId"
+                        asp-items="@(new SelectList(@ViewBag.SectorList, "Id", "Name"))">
+                </select>
+                <label class="control-label">Aleja</label>
+                <select asp-for="AlleyId" class="form-control" id="alleyId"></select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Name" class="control-label">Nazwa</label>
+                <input asp-for="Name" class="form-control"/>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Ilość gniazd</label>
+                <select name="numberOfSockets" class="form-control">
+                    <option value="3">3</option>
+                    <option value="6">6</option>
+                    <option value="9">9</option>
+                    <option value="12">12</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Maksymalna pojemność gniazda</label>
+                <select name="socketMaxCapacity" class="form-control">
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="12">12</option>
+                </select>
+            </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
+</body>
+
+@* <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script> *@
+<script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        GetAlleysBySectorId();
+    })
+    $("#sectorId").change(function () {
+        GetAlleysBySectorId();
+    });
+    var GetAlleysBySectorId = function () {
+         $.ajax({
+            url: '@Url.Action("GetAlleysBySectorId", "Warehouse")',
+            type: 'GET',
+            data: {
+                sectorId:$('#sectorId').val(),
+            },
+             success: function (data) {
+                $('#alleyId').find('option').remove()
+                $(data).each(function (index, item) {
+                        $('#alleyId').append('<option value="' + item.id + '">' + item.name + '</option>')
+                    });
+            },
+            error: function () {
+            }
+           });
+    }
+</script>

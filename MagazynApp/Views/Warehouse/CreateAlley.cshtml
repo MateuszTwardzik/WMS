@@ -1,0 +1,42 @@
+﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@using MagazynApp.Controllers
+@model Alley
+@{
+    ViewData["Title"] = "Sectors";
+    Layout = "~/Views/Shared/AdminLTE/_Layout.cshtml";
+
+}
+<head>
+    <meta name="viewport" content="width=device-width"/>
+</head>
+
+<body>
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">Dodaj regał</h3>
+    </div>
+    <!-- /.card-header -->
+    <!-- form start -->
+    <form asp-action="CreateAlley">
+        <div class="card-body">
+            <div class="form-group">
+                <label class="control-label">Sektor</label>
+                <select asp-for="SectorId" class="form-control" id="sectorId"
+                        asp-items="@(new SelectList(@ViewBag.SectorList, "Id", "Name"))">
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Name" class="control-label">Nazwa</label>
+                <input asp-for="Name" class="form-control"/>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
+</body>
