@@ -1,18 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MagazynApp.Data;
 using Microsoft.EntityFrameworkCore;
-using Npgsql.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using MagazynApp.Models;
 using MagazynApp.Data.Interfaces;
 using MagazynApp.Data.Repositories;
@@ -47,7 +41,6 @@ namespace MagazynApp
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
-
             services.Configure<IdentityOptions>(options =>
             {
                 // Password settings.

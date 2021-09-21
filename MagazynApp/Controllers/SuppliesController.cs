@@ -38,8 +38,17 @@ namespace MagazynApp.Controllers
         [HttpPost]
         public async Task<IActionResult> CompleteSupply(int supplyId)
         {
-            var supply = await _supplyRepository.FindSupplyAsync(supplyId);
-            await _supplyRepository.CompleteSupplyAsync(supply);
+            try
+            {
+                var supply = await _supplyRepository.FindSupplyAsync(supplyId);
+                await _supplyRepository.CompleteSupplyAsync(supply);
+
+            }
+            catch (Exception e)
+            {
+                TempData["error"] = "Brak miejsca w magazynie";
+            }
+            
             return RedirectToAction("Index");
         }
 

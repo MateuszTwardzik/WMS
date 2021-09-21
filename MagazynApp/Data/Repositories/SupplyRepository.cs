@@ -12,10 +12,12 @@ namespace MagazynApp.Data.Repositories
     public class SupplyRepository : ISupplyRepository
     {
         private readonly MagazynContext _context;
+        private readonly IWarehouseRepository _warehouseRepository;
 
-        public SupplyRepository(MagazynContext context)
+        public SupplyRepository(MagazynContext context, IWarehouseRepository warehouseRepository)
         {
             _context = context;
+            _warehouseRepository = warehouseRepository;
         }
 
         public async Task CreateSupplyAsync(int productId, int amount)
@@ -58,6 +60,7 @@ namespace MagazynApp.Data.Repositories
             catch (Exception)
             {
                 transaction.Rollback();
+                throw;
             }
         }
 
@@ -74,64 +77,95 @@ namespace MagazynApp.Data.Repositories
             var socketList = FindSockets(supply.Amount)
                 .Result.OrderBy(s => s.Id);
 
-            
 
             var socketProduct = new List<SocketProduct>();
-            try
+            foreach (var socket in socketList)
             {
-                foreach (var socket in socketList)
+                var socketAmount = socket.MaxCapacity - socket.Capacity;
+                double productAmount = 0;
+
+
+                if (socketProduct == null)
                 {
-                    var socketAmount = socket.MaxCapacity - socket.Capacity;
-                    double productAmount = 0;
-
-
-                    if (socketProduct == null)
-                    {
-                        throw new SocketNotFoundException();
-                    }
-
-                    if (socketAmount < supplyAmount)
-                    {
-                        socket.Capacity += socketAmount;
-                        productAmount = socketAmount;
-                        supplyAmount -= socketAmount;
-                    }
-                    else
-                    {
-                        socket.Capacity += supplyAmount;
-                        productAmount = supplyAmount;
-                    }
-
-                    socketProduct.Add(new SocketProduct()
-                    {
-                        ProductId = supply.ProductId,
-                        SocketId = socket.Id,
-                        Amount = productAmount
-                    });
+                    throw new SocketNotFoundException();
                 }
 
-                await _context.AddRangeAsync(socketProduct);
-                _context.UpdateRange(socketList);
-                await _context.SaveChangesAsync();
+                if (socketAmount < supplyAmount)
+                {
+                    socket.Capacity += socketAmount;
+                    productAmount = socketAmount;
+                    supplyAmount -= socketAmount;
+                }
+                else
+                {
+                    socket.Capacity += supplyAmount;
+                    productAmount = supplyAmount;
+                }
+
+                socketProduct.Add(new SocketProduct()
+                {
+                    ProductId = supply.ProductId,
+                    SocketId = socket.Id,
+                    Amount = productAmount
+                });
             }
-            catch (SocketNotFoundException)
-            {
-            }
+
+            await _context.AddRangeAsync(socketProduct);
+            _context.UpdateRange(socketList);
+            await _context.SaveChangesAsync();
         }
 
         private async Task<List<Socket>> FindSockets(double amount)
         {
             var socketList = new List<Socket>();
-            while (socketList.Sum(s => s.MaxCapacity - s.Capacity) < amount)
-            {
-                var freeSocket = await _context.Socket.FirstAsync(s => s.Capacity < 40 && !socketList.Contains(s));
-                if (freeSocket == null)
-                {
-                    throw new SocketNotFoundException();
-                }
+            var shelves = _warehouseRepository.ShelvesToList().Result
+                .OrderByDescending(s => s.Capacity)
+                .ToList();
+            var selectedShelves = shelves.Where(s => s.MaxCapacity - s.Capacity > 0).ToList();
 
-                socketList.Add(freeSocket);
+            foreach (var shelf in selectedShelves)
+            {
+                foreach (var socket in shelf.Sockets)
+                {
+                    if (socketList.Sum(s => s.MaxCapacity - s.Capacity) < amount && !socketList.Contains(socket))
+                    {
+                        if (socket.MaxCapacity - socket.Capacity > 0)
+                        {
+                            socketList.Add(socket);
+                        }
+                    }
+                }
             }
+
+            // var shelf = shelves.FirstOrDefault(s => s.MaxCapacity - s.Capacity >= amount);
+
+            // if (shelf == null)
+            // {
+            //     var sockets = _warehouseRepository.SocketsToList().Result.OrderBy(s => s.Capacity).ToList();
+            //
+            //     foreach (var socket in sockets.Where(socket =>
+            //         socket.Capacity != socket.MaxCapacity && !socketList.Contains(socket)))
+            //     {
+            //         if (socketList.Sum(s => s.MaxCapacity - s.Capacity) < amount)
+            //         {
+            //             socketList.Add(socket);
+            //         }
+            //     }
+            // }
+            //
+            // if (shelf != null)
+            // {
+            //     var sockets = shelf.Sockets.OrderBy(s => s.Capacity).ToList();
+            //
+            //     foreach (var socket in sockets.Where(socket =>
+            //         socket.Capacity != socket.MaxCapacity && !socketList.Contains(socket)))
+            //     {
+            //         if (socketList.Sum(s => s.MaxCapacity - s.Capacity) < amount)
+            //         {
+            //             socketList.Add(socket);
+            //         }
+            //     }
+            // }
 
             return socketList;
         }

@@ -9,6 +9,7 @@ namespace MagazynApp.Data.Interfaces
     public interface IProductRepository
     {
         IQueryable<Product> GetProducts();
+        Task<List<Product>> ProductsToListAsync();
         Task<Product> FindProductByIdAsync(int? id);
         Task AddProductAsync(Product product);
         Task DeleteProduct(int id);

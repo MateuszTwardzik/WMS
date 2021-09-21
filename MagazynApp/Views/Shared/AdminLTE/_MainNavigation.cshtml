@@ -19,7 +19,7 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
                 <li class="nav-item ">
-                    <a asp-controller="Home" asp-action="Index" class="nav-link @Url.MakeActiveClass("home","index")">
+                    <a asp-controller="Home" asp-action="Index" class="nav-link @Url.MakeActiveClass("home", "index")">
                         <i class="nav-icon fas fa-home"></i>
                         <p>
                             Home
@@ -38,13 +38,13 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a asp-controller="Products" asp-action="Index" class="nav-link @Url.MakeActiveClass("products","index")">
+                            <a asp-controller="Products" asp-action="Index" class="nav-link @Url.MakeActiveClass("products", "index")">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Lista produktów</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a asp-controller="ProductTypes" asp-action="Index" class="nav-link @Url.MakeActiveClass("producttypes","index")">
+                            <a asp-controller="ProductTypes" asp-action="Index" class="nav-link @Url.MakeActiveClass("producttypes", "index")">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Typy produktów</p>
                             </a>
@@ -63,19 +63,19 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a asp-controller="Orders" asp-action="Index" class="nav-link @Url.MakeActiveClass("orders","index")">
+                            <a asp-controller="Orders" asp-action="Index" class="nav-link @Url.MakeActiveClass("orders", "index")">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Zamówienia wychodzące</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a asp-controller="Supplies" asp-action="Index" class="nav-link @Url.MakeActiveClass("supplies","index")">
+                            <a asp-controller="Supplies" asp-action="Index" class="nav-link @Url.MakeActiveClass("supplies", "index")">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Zamówienia Przychodzące</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a asp-controller="Clients" asp-action="Index" class="nav-link @Url.MakeActiveClass("clients","index")">
+                            <a asp-controller="Clients" asp-action="Index" class="nav-link @Url.MakeActiveClass("clients", "index")">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Klienci</p>
                             </a>
@@ -83,8 +83,46 @@
                     </ul>
                 </li>
 
+                @*Magazyn*@
+                <li class="nav-item">
+                    <a class="nav-link">
+                        <i class="nav-icon fas fa-table"></i>
+                        <p>
+                            Magazyn
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-controller="Warehouse" asp-action="Sectors" class="nav-link @Url.MakeActiveClass("warehouse", "sectors")">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Sektory</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-controller="Warehouse" asp-action="Alleys" class="nav-link @Url.MakeActiveClass("warehouse", "alleys")">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Aleje</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-controller="Warehouse" asp-action="Shelves" class="nav-link @Url.MakeActiveClass("warehouse", "shelves")">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Regały</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-controller="Warehouse" asp-action="Sockets" class="nav-link @Url.MakeActiveClass("warehouse", "sockets")">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Gniazda regałowe</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+
                 <li class="nav-item ">
-                    <a asp-controller="AdminPanel" asp-action="Index" class="nav-link @Url.MakeActiveClass("adminpanel","index")">
+                    <a asp-controller="AdminPanel" asp-action="Index" class="nav-link @Url.MakeActiveClass("adminpanel", "index")">
                         <i class="nav-icon fas fa-lock"></i>
                         <p>
                             Panel administracyjny
@@ -93,7 +131,7 @@
                 </li>
 
                 <li class="nav-item ">
-                    <a asp-controller="Home" asp-action="Privacy" class="nav-link @Url.MakeActiveClass("home","privacy")">
+                    <a asp-controller="Home" asp-action="Privacy" class="nav-link @Url.MakeActiveClass("home", "privacy")">
                         <i class="nav-icon fas fa-lock"></i>
                         <p>
                             Privacy
@@ -120,5 +158,3 @@
         </nav>
     </div>
 </aside>
-
-

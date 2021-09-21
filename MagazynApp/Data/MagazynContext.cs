@@ -67,6 +67,10 @@ namespace MagazynApp.Data
             modelBuilder.Entity<Product>().HasOne<ProductType>(pt => pt.Type)
                 .WithMany(p => p.Product)
                 .HasForeignKey(pt => pt.TypeId);
+            
+            modelBuilder.Entity<Product>().HasMany<SocketProduct>(s => s.SocketProduct)
+                .WithOne(s => s.Product)
+                .HasForeignKey(s => s.ProductId);
 
             modelBuilder.Entity<Order>().HasOne<OrderState>(os => os.State)
                 .WithMany(o => o.Order)

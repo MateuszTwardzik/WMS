@@ -58,5 +58,12 @@ namespace MagazynApp.Data.Repositories
             product.Quantity = amount;
             await UpdateProduct(product);
         }
+
+        public Task<List<Product>> ProductsToListAsync()
+        {
+            return _context.Product
+                .Include(p => p.Type)
+                .ToListAsync();
+        }
     }
 }

@@ -12,6 +12,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
+                    <h1 class="text-center" style="color: red">@TempData["error"]</h1>
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">Zamówienia przychodzące</h3>
@@ -20,18 +21,18 @@
                         <div class="card-body">
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
-                                    <tr>
-                                        <th>Nazwa produktu</th>
-                                        <th>Ilośc)</th>
-                                        <th>Stan</th>
-                                        <th>Data zamówienia</th>
-                                        <th>Data realizacji</th>
-                                        <th>Akcje</th>
-                                    </tr>
+                                <tr>
+                                    <th>Nazwa produktu</th>
+                                    <th>Ilośc)</th>
+                                    <th>Stan</th>
+                                    <th>Data zamówienia</th>
+                                    <th>Data realizacji</th>
+                                    <th>Akcje</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var item in Model)
-                                    {
+                                @foreach (var item in Model)
+                                {
                                     <tr>
                                         <td>
                                             @Html.DisplayFor(modelItem => item.Product.Name)
@@ -51,12 +52,12 @@
                                         <td>
                                             <div class="btn-group">
                                                 <form asp-action="DeleteSupply" asp-controller="Supplies">
-                                                    <input value="@item.Id" type="hidden" name="supplyId" />
+                                                    <input value="@item.Id" type="hidden" name="supplyId"/>
                                                     <button class="btn-outline-danger btn-xs mr-1" type="submit">Usuń</button>
                                                 </form>
                                                 @*<a class="btn-outline-info btn-xs" asp-action="Details" asp-route-id="@item.Id">Details</a>*@
                                                 <form asp-action="CompleteSupply" asp-controller="Supplies">
-                                                    <input value="@item.Id" type="hidden" name="supplyId" />
+                                                    <input value="@item.Id" type="hidden" name="supplyId"/>
                                                     <button class="btn-outline-success btn-xs mr-1" type="submit">Zrealizuj</button>
                                                 </form>
                                             </div>
@@ -64,7 +65,7 @@
                                         </td>
 
                                     </tr>
-                                    }
+                                }
                                 </tbody>
                             </table>
                         </div>

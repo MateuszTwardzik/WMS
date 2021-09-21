@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Scaffolding;
 
 namespace MagazynApp.Data.Repositories
 {
@@ -90,6 +91,78 @@ namespace MagazynApp.Data.Repositories
                 .FirstOrDefaultAsync(s => s.Id == socketId);
         }
 
+        public Task<List<SocketProduct>> SocketProductToList()
+        {
+            return _context.SocketProduct
+                .Include(s => s.Product)
+                .Include(s => s.Socket)
+                .ThenInclude(s => s.Shelf)
+                .ThenInclude(s => s.Alley)
+                .ThenInclude(s => s.Sector)
+                .AsNoTracking()
+                .ToListAsync();
+        }
 
+        public async Task AddShelf(Shelf shelf)
+        {
+            await _context.AddAsync(shelf);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddSocketRange(IEnumerable<Socket> sockets)
+        {
+            await _context.AddRangeAsync(sockets);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Socket>> CreateSockets(int numberOfSockets, int maxCapacity, int shelfId)
+        {
+            var sockets = new List<Socket>();
+
+            for (var i = 0; i < numberOfSockets; i++)
+            {
+                var socket = new Socket
+                {
+                    Name = 'S' + (i + 1).ToString(),
+                    Capacity = 0,
+                    MaxCapacity = maxCapacity,
+                    ShelfId = shelfId
+                };
+                sockets.Add(socket);
+            }
+
+            return sockets;
+        }
+
+        public async Task AddSector(Sector sector)
+        {
+            await _context.AddAsync(sector);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Sector> CreateSector(string name)
+        {
+            var sector = new Sector
+            {
+                Name = name
+            };
+            return sector;
+        }
+
+        public async Task<Alley> CreateAlley(int sectorId, string name)
+        {
+            var alley = new Alley
+            {
+                SectorId = sectorId,
+                Name = name
+            };
+            return alley;
+        }
+
+        public async Task AddAlley(Alley alley)
+        {
+            await _context.AddAsync(alley);
+            await _context.SaveChangesAsync();
+        }
     }
 }

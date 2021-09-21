@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,8 +35,11 @@ namespace MagazynApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var products = _productRepository.GetProducts().ToList();
+            //var products = _productRepository.GetProducts().ToList();
+
+            var products = await _productRepository.ProductsToListAsync();
             var orders = await _orderRepository.OrdersToListAsync();
+
 
             ViewBag.products_number = products.Count.ToString();
 
@@ -59,7 +63,7 @@ namespace MagazynApp.Controllers
                 .OrderBy(o => o.OrderDate);
 
             var startDate = DateTime.Now;
-            
+
             if (orders.Count != 0)
             {
                 startDate = orders.Min(o => o.OrderDate);

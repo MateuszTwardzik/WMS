@@ -12,20 +12,18 @@ namespace MagazynApp.Data.Interfaces
         Task<List<Alley>> AlleysToList();
         Task<List<Shelf>> ShelvesToList();
         Task<List<Socket>> SocketsToList();
-        
         Task<Sector> FindSector(int sectorId);
-        // Task<Sector> FindSector(Sector alley);
-        // Task<Sector> FindSector(Shelf shelf);
-        // Task<Sector> FindSector(Socket socket);
-
         Task<Alley> FindAlley(int alleyId);
-        // Task<Alley> FindAlley(Shelf shelf);
-        // Task<Alley> FindAlley(Socket socket);
-        
         Task<Shelf> FindShelf(int shelfId);
-        // Task<Shelf> FindShelf(Socket socket);
-
         Task<Socket> FindSocket(int socketId);
+        Task <List<SocketProduct>> SocketProductToList();
+        Task AddShelf(Shelf shelf);
+        Task AddSocketRange(IEnumerable<Socket> sockets);
+        Task<IEnumerable<Socket>> CreateSockets(int numberOfSockets, int maxCapacity, int shelfId);
+        Task AddSector(Sector sector);
+        Task<Sector> CreateSector(string name);
+        Task<Alley> CreateAlley(int sectorId, string name);
+        Task AddAlley(Alley alley);
 
 
 

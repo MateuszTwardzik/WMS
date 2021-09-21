@@ -14,15 +14,18 @@ namespace MagazynApp.Data.Repositories
         private readonly MagazynContext _context;
         private readonly ShoppingCart _shoppingCart;
         private readonly IProductRepository _productRepository;
+        private readonly IWarehouseRepository _warehouseRepository;
 
         public OrderRepository
         (MagazynContext context,
             ShoppingCart shoppingCart,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            IWarehouseRepository warehouseRepository)
         {
             _context = context;
             _shoppingCart = shoppingCart;
             _productRepository = productRepository;
+            _warehouseRepository = warehouseRepository;
         }
 
 
@@ -121,7 +124,7 @@ namespace MagazynApp.Data.Repositories
             foreach (var detail in order.OrderLines)
             {
                 double temp = detail.Quantity;
-
+                
                 var detailSockets = socketProductList.Where(s => s.ProductId == detail.ProductId)
                     .OrderBy(s => s.Amount)
                     .ToList();
@@ -176,16 +179,16 @@ namespace MagazynApp.Data.Repositories
             foreach (var detail in orderDetails)
             {
                 double productSocket = 0;
-
-                var sockets = await _context.SocketProduct
-                    .Include(s => s.Socket)
+                
+                var sockets = _warehouseRepository.SocketProductToList().Result
                     .Where(s => s.ProductId == detail.ProductId)
                     .OrderBy(s => s.Amount)
-                    .ToListAsync();
+                    .ToList();
+
 
                 foreach (var socket in sockets)
                 {
-                    if (productSocket <= detail.Quantity)
+                    if (productSocket < detail.Quantity)
                     {
                         socketProductList.Add(socket);
                         productSocket += socket.Amount;

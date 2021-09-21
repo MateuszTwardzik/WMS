@@ -15,35 +15,36 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
+                <a class="btn btn-block btn-outline-info" asp-action="CreateAlley">Dodaj aleje</a>
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Sektory</h3>
+                        <h3 class="card-title">Aleje</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
                         <table id="example1" class="table table-bordered table-striped">
                             <thead>
                             <tr>
+                                <th>Sektor</th>
                                 <th>Nazwa</th>
+                                <th>Pełna nazwa</th>
                                 <th>Przechowuje</th>
                                 <th>Maksymalna pojemność</th>
+                                <th>Akcje</th>
                             </tr>
                             </thead>
                             <tbody>
                             @foreach (var item in Model)
                             {
                                 <tr>
+                                    <td>@Html.DisplayFor(modelItem => item.Sector.Name)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Capacity)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.MaxCapacity)</td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.FullName)
+                                        <a class="btn-outline-info btn-sm mr-2" asp-action="Shelves" asp-route-alleyId="@item.Id">Regały</a>
                                     </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Capacity)
-                                    </td>
-
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.MaxCapacity)
-                                    </td>
-                                    <td><a class="btn-outline-info btn-sm mr-2" asp-action="Shelves" asp-route-alleyId="@item.Id">Regały</a></td>
                                 </tr>
                             }
                             </tbody>
