@@ -40,18 +40,8 @@ namespace MagazynApp.Controllers
             {
                 await _shoppingCart.AddToCartAsync(selectedProduct, amount);
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Products");
         }
-
-        //public RedirectToActionResult AddToShoppingCart(int productId, int amount)
-        //{
-        //    var selectedProduct = _context.Product.FirstOrDefault(p => p.Id == productId);
-        //    if (selectedProduct != null)
-        //    {
-        //       _shoppingCart.AddToCart(selectedProduct, amount);
-        //    }
-        //    return RedirectToAction("Index");
-        //}
 
         public RedirectToActionResult RemoveFromShoppingCart(int productId)
         {

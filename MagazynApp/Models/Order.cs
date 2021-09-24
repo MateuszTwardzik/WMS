@@ -20,7 +20,7 @@ namespace MagazynApp.Models
         public OrderState State { get; set; }
         [DataType(DataType.Date)]
         public DateTime OrderDate { get; set; }
+        [DataType(DataType.Date)]
         public DateTime CompletionDate { get; set; }
-        public IList<MissingOrderedProduct> MissingOrderedProducts { get; set; } = new List<MissingOrderedProduct>();
     }
 }

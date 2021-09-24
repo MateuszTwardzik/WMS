@@ -9,19 +9,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MagazynApp.Exceptions;
 
 namespace MagazynApp.Controllers
 {
     [Authorize]
     public class SuppliesController : Controller
     {
-
         private readonly ISupplyRepository _supplyRepository;
 
         public SuppliesController(ISupplyRepository supplyRepository)
         {
             _supplyRepository = supplyRepository;
         }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -32,7 +33,7 @@ namespace MagazynApp.Controllers
         public async Task<IActionResult> CreateSupply(int productId, int amount)
         {
             await _supplyRepository.CreateSupplyAsync(productId, amount);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Products");
         }
 
         [HttpPost]
@@ -42,13 +43,18 @@ namespace MagazynApp.Controllers
             {
                 var supply = await _supplyRepository.FindSupplyAsync(supplyId);
                 await _supplyRepository.CompleteSupplyAsync(supply);
-
             }
-            catch (Exception e)
+            catch (SocketNotFoundException)
             {
                 TempData["error"] = "Brak miejsca w magazynie";
+                
             }
-            
+            catch (SupplyIsCompletedException)
+            {
+                TempData["error"] = "Zamówienie zostało już zrealizowane";
+            }
+
+
             return RedirectToAction("Index");
         }
 
@@ -58,7 +64,5 @@ namespace MagazynApp.Controllers
             await _supplyRepository.DeleteSupplyAsync(supplyId);
             return RedirectToAction("Index");
         }
-
-
     }
 }

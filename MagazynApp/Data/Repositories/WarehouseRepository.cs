@@ -19,89 +19,91 @@ namespace MagazynApp.Data.Repositories
             _context = context;
         }
 
-        public Task<List<Sector>> SectorsToList()
+        public async Task<List<Sector>> SectorsToList()
         {
-            return _context.Sector
+            return await _context.Sector
                 .Include(s => s.Alleys)
                 .ThenInclude(s => s.Shelves)
                 .ThenInclude(s => s.Sockets)
                 .ToListAsync();
         }
 
-        public Task<List<Alley>> AlleysToList()
+        public async Task<List<Alley>> AlleysToList()
         {
-            return _context.Alley
+            return await _context.Alley
                 .Include(a => a.Sector)
                 .Include(a => a.Shelves)
                 .ThenInclude(a => a.Sockets)
                 .ToListAsync();
         }
 
-        public Task<List<Shelf>> ShelvesToList()
+        public async Task<List<Shelf>> ShelvesToList()
         {
-            return _context.Shelf
+            return await _context.Shelf
                 .Include(s => s.Alley)
                 .ThenInclude(s => s.Sector)
                 .Include(s => s.Sockets)
                 .ToListAsync();
         }
 
-        public Task<List<Socket>> SocketsToList()
+        public async Task<List<Socket>> SocketsToList()
         {
-            return _context.Socket
+            return await _context.Socket
+                .Include(s => s.SocketProduct)
+                .ThenInclude(s => s.Product)
                 .Include(s => s.Shelf)
                 .ThenInclude(s => s.Alley)
                 .ThenInclude(s => s.Sector)
                 .ToListAsync();
         }
 
-        public Task<Sector> FindSector(int sectorId)
+        public async Task<Sector> FindSector(int sectorId)
         {
-            return _context.Sector
+            return await _context.Sector
                 .Include(s => s.Alleys)
                 .ThenInclude(s => s.Shelves)
                 .ThenInclude(s => s.Sockets)
                 .FirstOrDefaultAsync(s => s.Id == sectorId);
         }
 
-        public Task<Alley> FindAlley(int alleyId)
+        public async Task<Alley> FindAlley(int alleyId)
         {
-            return _context.Alley
+            return await _context.Alley
                 .Include(a => a.Sector)
                 .Include(a => a.Shelves)
                 .ThenInclude(a => a.Sockets)
                 .FirstOrDefaultAsync(a => a.Id == alleyId);
         }
 
-        public Task<Shelf> FindShelf(int shelfId)
+        public async Task<Shelf> FindShelf(int shelfId)
         {
-            return _context.Shelf
+            return await _context.Shelf
                 .Include(s => s.Alley)
                 .ThenInclude(s => s.Sector)
                 .Include(s => s.Sockets)
                 .FirstOrDefaultAsync(s => s.Id == shelfId);
         }
 
-        public Task<Socket> FindSocket(int socketId)
+        public async Task<Socket> FindSocket(int socketId)
         {
-            return _context.Socket
+            return await _context.Socket
                 .Include(s => s.Shelf)
                 .ThenInclude(s => s.Alley)
                 .ThenInclude(s => s.Sector)
                 .FirstOrDefaultAsync(s => s.Id == socketId);
         }
 
-        public Task<List<SocketProduct>> SocketProductToList()
+        public async Task<List<SocketProduct>> SocketProductToList()
         {
-            return _context.SocketProduct
+            return await _context.SocketProduct
                 .Include(s => s.Product)
                 .Include(s => s.Socket)
                 .ThenInclude(s => s.Shelf)
                 .ThenInclude(s => s.Alley)
                 .ThenInclude(s => s.Sector)
-                .AsNoTracking()
                 .ToListAsync();
         }
+        
 
         public async Task AddShelf(Shelf shelf)
         {

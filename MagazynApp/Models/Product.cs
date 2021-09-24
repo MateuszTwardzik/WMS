@@ -21,7 +21,6 @@ namespace MagazynApp.Models
         public int TypeId { get; set; }
         public ProductType Type { get; set; }
         public ICollection<OrderDetail> OrderLines { get; set; }
-        public IList<MissingOrderedProduct> MissingOrderedProducts { get; set; }
         public virtual ICollection<SocketProduct> SocketProduct { get; set; }
     }
 }

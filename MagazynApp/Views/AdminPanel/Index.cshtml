@@ -4,24 +4,35 @@
 }
 
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <meta name="viewport" content="width=device-width"/>
 </head>
 
+
 <body>
-    <h1 style="text-align: center">Admin Panel</h1>
-    <ul style="margin-top: 5%">
-        <li><a href="/Identity/Account/Register">Dodaj nowego użytkownik</a></li>
-        <li><a href="/RoleManager/Index">Dodaj role kont</a></li>
-        <li><a href="/UserRoles/Index">Zarządzaj rolami kont</a></li>
-        <li><a href="/UserManager/Index">Zarządzaj kontami</a></li>
-    </ul>
-
-
-
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card text-center">
+                    <div class="card-header">
+                        Panel administracyjny
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="btn-group-vertical mb-2" style="width: 60%">
+                            <button class="btn btn-block btn-info mb-3" onclick="window.location.href = '/Identity/Account/Register'">Dodaj nowego użytkownika</button>
+                            <button class="btn btn-block btn-info mb-3" onclick="window.location.href = '/RoleManager/Index'">Zarządzaj rolami</button>
+                            <button class="btn btn-block btn-info mb-3" onclick="window.location.href = '/UserRoles/Index'">Zmień role użytkownika</button>
+                            <button class="btn btn-block btn-info mb-3" onclick="window.location.href = '/UserManager/Index'">Zarządzaj użytkownikami</button>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 </body>
-
-
-

@@ -12,6 +12,7 @@ namespace MagazynApp.Models
     public class ShoppingCart
     {
         private readonly MagazynContext _context;
+
         private ShoppingCart(MagazynContext context)
         {
             _context = context;
@@ -31,14 +32,14 @@ namespace MagazynApp.Models
 
             session.SetString("CartId", cartId);
 
-            return new ShoppingCart(context) { ShoppingCartId = cartId };
+            return new ShoppingCart(context) {ShoppingCartId = cartId};
         }
 
         public async Task AddToCartAsync(Product product, int amount)
         {
             var shoppingCartItem =
-                    await _context.ShoppingCartItems.SingleOrDefaultAsync(
-                        s => s.Product.Id == product.Id && s.ShoppingCartId == ShoppingCartId);
+                await _context.ShoppingCartItems.SingleOrDefaultAsync(
+                    s => s.Product.Id == product.Id && s.ShoppingCartId == ShoppingCartId);
 
             if (shoppingCartItem == null)
             {
@@ -54,40 +55,18 @@ namespace MagazynApp.Models
             }
             else
             {
-                shoppingCartItem.Amount += amount;                
+                shoppingCartItem.Amount += amount;
             }
+
             await _context.SaveChangesAsync();
         }
 
-        //public void AddToCart(Product product, int amount)
-        //{
-        //    var shoppingCartItem =
-        //             _context.ShoppingCartItems.SingleOrDefault(
-        //                s => s.Product.Id == product.Id && s.ShoppingCartId == ShoppingCartId);
-
-        //    if (shoppingCartItem == null)
-        //    {
-        //        shoppingCartItem = new ShoppingCartItem
-        //        {
-        //            ShoppingCartId = ShoppingCartId.ToString(),
-        //            ProductId = product.Id,                 
-        //            Amount = amount
-        //        };
-
-        //        _context.ShoppingCartItems.Add(shoppingCartItem);
-        //    }
-        //    else
-        //    {
-        //        shoppingCartItem.Amount += amount;
-        //    }
-        //    _context.SaveChanges();
-        //}
 
         public void RemoveFromCart(Product product)
         {
             var shoppingCartItem =
-                    _context.ShoppingCartItems.SingleOrDefault(
-                        s => s.Product.Id == product.Id && s.ShoppingCartId == ShoppingCartId);
+                _context.ShoppingCartItems.SingleOrDefault(
+                    s => s.Product.Id == product.Id && s.ShoppingCartId == ShoppingCartId);
 
 
             if (shoppingCartItem != null)
@@ -100,19 +79,18 @@ namespace MagazynApp.Models
 
         public List<ShoppingCartItem> GetShoppingCartItems()
         {
-            return ShoppingCartItems ??
-                   (ShoppingCartItems =
-                       _context.ShoppingCartItems.Where(c => c.ShoppingCartId == ShoppingCartId)
-                           .Include(s => s.Product)
-                           .ToList());
+            return ShoppingCartItems ??= _context.ShoppingCartItems
+                .Where(c => c.ShoppingCartId == ShoppingCartId)
+                .Include(s => s.Product)
+                .ToList();
         }
+
         public async Task<List<ShoppingCartItem>> GetShoppingCartItemsAsync()
         {
-            return ShoppingCartItems ??
-                   (ShoppingCartItems = await
-                        _context.ShoppingCartItems.Where(c => c.ShoppingCartId == ShoppingCartId)
-                           .Include(s => s.Product)
-                           .ToListAsync());
+            return ShoppingCartItems ??= await
+                _context.ShoppingCartItems.Where(c => c.ShoppingCartId == ShoppingCartId)
+                    .Include(s => s.Product)
+                    .ToListAsync();
         }
 
         public void ClearCart()

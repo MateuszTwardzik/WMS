@@ -93,20 +93,7 @@ namespace MagazynApp.Controllers
 
             return View(order);
         }
-
-        [HttpGet]
-        public IActionResult CheckoutConfirmation(List<MissingOrderedProduct> missingItemsList)
-        {
-            var outMissingItemsList = missingItemsList.Select(item => new MissingOrderedProductViewModel()
-            {
-                ProductName = _productRepository.FindProductByIdAsync(item.ProductId).Result.Name,
-                ProductAmount = item.ProductAmount,
-                OrderedAmount = item.OrderedAmount,
-                MissingAmount = item.MissingAmount
-            }).ToList();
-
-            return View("CheckoutConfirmation", outMissingItemsList);
-        }
+        
 
         public IActionResult CheckoutFail()
         {
@@ -145,25 +132,6 @@ namespace MagazynApp.Controllers
             await _orderRepository.DeleteOrder(id);
             return RedirectToAction("Index");
         }
-
-        [HttpGet]
-        public IActionResult MissingProducts()
-        {
-            var missingItems = _context.MissingOrderedProduct;
-            List<MissingOrderedProductViewModel> missingItemsList = new List<MissingOrderedProductViewModel>();
-            foreach (var item in missingItems)
-            {
-                var missingItem = new MissingOrderedProductViewModel()
-                {
-                    ProductName = _productRepository.FindProductByIdAsync(item.ProductId).Result.Name,
-                    ProductAmount = item.ProductAmount,
-                    OrderedAmount = item.OrderedAmount,
-                    MissingAmount = item.MissingAmount
-                };
-                missingItemsList.Add(missingItem);
-            }
-
-            return View(missingItemsList);
-        }
+        
     }
 }

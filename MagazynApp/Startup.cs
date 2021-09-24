@@ -33,7 +33,6 @@ namespace MagazynApp
             services.AddDbContext<MagazynContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")),
                 ServiceLifetime.Transient);
-
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {

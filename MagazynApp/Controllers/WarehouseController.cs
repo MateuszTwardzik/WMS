@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using MagazynApp.Data.Interfaces;
 using MagazynApp.Models;
 using MagazynApp.ViewModel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MagazynApp.Controllers
 {
@@ -144,6 +144,26 @@ namespace MagazynApp.Controllers
             var alley = await _warehouseRepository.CreateAlley(sectorId, Name);
             await _warehouseRepository.AddAlley(alley);
             return RedirectToAction("Alleys");
+        }
+        [HttpGet]
+        public async Task<IActionResult> ProductsLocation()
+        {
+            var socketProducts = await _warehouseRepository.SocketProductToList();
+            
+            var productsList = socketProducts
+                .GroupBy(p => p.Product.Name)
+                .Select(p => new ProductLocationViewModel
+                {
+                    Name = p.Key,
+                    Amount = p.Sum(p => p.Amount),
+                    Sockets = p.Select(p => p.Socket)
+                   // Sockets = p.Select(p => p.Socket.FullName)
+                    
+                })
+                .OrderBy(p => p.Name)
+                .ToList();
+
+            return View(productsList);
         }
     }
 }

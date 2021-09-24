@@ -104,5 +104,12 @@ namespace MagazynApp.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            await _userManager.DeleteAsync(user);
+            return RedirectToAction("Index");
+        }
+
     }
 }

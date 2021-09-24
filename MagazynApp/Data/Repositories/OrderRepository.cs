@@ -80,7 +80,6 @@ namespace MagazynApp.Data.Repositories
             var order = await _context.Order
                 .Include(o => o.Client)
                 .Include(o => o.State)
-                .Include(o => o.MissingOrderedProducts)
                 .Include(o => o.OrderLines)
                 .ThenInclude(o => o.Product)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -90,7 +89,12 @@ namespace MagazynApp.Data.Repositories
 
         public async Task<IList<Order>> OrdersToListAsync()
         {
-            var orderList = await _context.Order.Include(o => o.Client).Include(o => o.State).ToListAsync();
+            var orderList = await _context.Order
+                .Include(o => o.Client)
+                .Include(o => o.State)
+                .Include(o => o.OrderLines)
+                .ThenInclude(o => o.Product)
+                .ToListAsync();
             return orderList;
         }
 
@@ -124,7 +128,7 @@ namespace MagazynApp.Data.Repositories
             foreach (var detail in order.OrderLines)
             {
                 double temp = detail.Quantity;
-                
+
                 var detailSockets = socketProductList.Where(s => s.ProductId == detail.ProductId)
                     .OrderBy(s => s.Amount)
                     .ToList();
@@ -173,18 +177,18 @@ namespace MagazynApp.Data.Repositories
         private async Task<List<SocketProduct>> FindSocket(List<OrderDetail> orderDetails)
         {
             var socketProductList = new List<SocketProduct>();
-            var socketList = new List<Socket>();
+            //var socketList = new List<Socket>();
 
 
             foreach (var detail in orderDetails)
             {
                 double productSocket = 0;
                 
-                var sockets = _warehouseRepository.SocketProductToList().Result
+                var sockets =  await _context.SocketProduct
+                    .Include(s => s.Socket)
                     .Where(s => s.ProductId == detail.ProductId)
                     .OrderBy(s => s.Amount)
-                    .ToList();
-
+                    .ToListAsync();
 
                 foreach (var socket in sockets)
                 {
