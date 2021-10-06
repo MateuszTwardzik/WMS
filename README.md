@@ -15,5 +15,5 @@ Aplikacja zrealizowana w technologi ASP.NET MVC Core <br>
 
 https://wmsmateusztwardzik.azurewebsites.net/
 
-Nazwa użytkownika:user
+Nazwa użytkownika:user<br>
 Hasło:user123
