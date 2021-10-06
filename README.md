@@ -12,3 +12,5 @@ Aplikacja zrealizowana w technologi ASP.NET MVC Core <br>
 1.Przenoszenie towarów.<br>
 2.Konwerter towarów.<br>
 <br>
+
+https://wmsmateusztwardzik.azurewebsites.net/
