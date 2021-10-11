@@ -1,0 +1,242 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/AdminLTE/_Layout.cshtml";
+}
+@using System.Linq;
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@model MagazynApp.ViewModel.HomeChartsViewModel
+@{
+    var PieX = Newtonsoft.Json.JsonConvert.SerializeObject(Model.ProductTypesPieChart.Select(x => x.Name).ToList());
+    var PieY = Newtonsoft.Json.JsonConvert.SerializeObject(Model.ProductTypesPieChart.Select(x => x.Quantity).ToList());
+    var LineX = Newtonsoft.Json.JsonConvert.SerializeObject(Model.OrderLineChart.Select(x => x.OrderDate).ToList());
+    var LineY = Newtonsoft.Json.JsonConvert.SerializeObject(Model.OrderLineChart.Select(x => x.Quantity).ToList());
+
+}
+
+<!DOCTYPE html>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <!-- small card -->
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>@ViewBag.productsCount</h3>
+
+                        <p>Rodzaje produktów</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                    <a asp-controller="Products" asp-action="Index" class="small-box-footer">
+                        Zobacz <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <!-- small card -->
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>@ViewBag.ordersCount</h3>
+
+                        <p>Zamówienia</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <a asp-controller="Orders" asp-action="Index" class="small-box-footer">
+                        Zobacz <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <!-- small card -->
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>@ViewBag.clientCount</h3>
+
+                        <p>Klienci</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <a asp-controller="Clients" asp-action="Index" class="small-box-footer">
+                        Zobacz <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <!-- small card -->
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>@ViewBag.suppliesCount</h3>
+
+                        <p>Dostawy</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <a asp-controller="Supplies" asp-action="Index" class="small-box-footer">
+                        Zobacz <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+            <!-- ./col -->
+        </div>
+                <row>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Powierzchnia magazynu</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="progress">
+                                <div class="progress-bar bg-primary progress-bar-striped" role="progressbar"
+                                     aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: @ViewBag.occupiedSpaceInt%">
+                                    <span>Zajęta powierzchnia - @ViewBag.occupiedSpaceDouble%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </row>
+
+        <div class="row">
+            <div class="col-md-6">
+                <!-- PIE CHART -->
+                <div class="card card-danger">
+                    <div class="card-header">
+                        <h3 class="card-title">Rodzaje produktów</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="ProductTypeChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!--right col-->
+            <div class="col-md-6">
+                <!-- LINE CHART -->
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">Zamówienia wychodzące</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart">
+                            <canvas id="OrderLineChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+<script type="text/javascript">
+
+            $(function () {
+        var chartName = "ProductTypeChart";
+            var ctx = document.getElementById(chartName).getContext('2d');
+            var data = {
+                    labels: @Html.Raw(PieX),
+                    datasets: [{
+                        label: "Products Chart",
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)',
+                            'rgba(255, 0, 0)',
+                            'rgba(0, 255, 0)',
+                            'rgba(0, 0, 255)',
+                            'rgba(192, 192, 192)',
+                            'rgba(255, 255, 0)',
+                            'rgba(255, 0, 255)'
+                        ],
+                        borderColor: [
+                            'rgba(255,99,132,1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(255, 0, 0)',
+                            'rgba(0, 255, 0)',
+                            'rgba(0, 0, 255)',
+                            'rgba(192, 192, 192)',
+                            'rgba(255, 255, 0)',
+                            'rgba(255, 0, 255)'
+                        ],
+                        borderWidth: 1,
+                        data: @Html.Raw(PieY)
+        }]
+                };
+
+
+
+           var myChart = new  Chart(ctx, {
+                    data: data,
+                    type:'pie'
+
+                });
+            });
+
+</script>
+
+<script type="text/javascript">
+
+            $(function () {
+        var chartName = "OrderLineChart";
+            var ctx = document.getElementById(chartName).getContext('2d');
+            var data = {
+            labels: @Html.Raw(LineX),
+            datasets: [{
+            data: @Html.Raw(LineY),
+            label: 'Zamówienia',
+            fill: false,
+
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+        }]
+    };
+
+
+           var myChart = new  Chart(ctx, {
+                    data: data,
+                    type:'line'
+
+                });
+            });
+
+</script>

@@ -1,0 +1,111 @@
+﻿@model IEnumerable<MagazynApp.Models.Order>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/AdminLTE/_Layout.cshtml";
+}
+
+<head>
+    <meta name="viewport" content="width=device-width"/>
+</head>
+
+<h1>@TempData["StockError"]</h1>
+<body>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Zamówienia</h3>
+                        <div class="btn-group btn-group-toggle float-right" data-toggle="buttons">
+                            <a asp-action="Index" id="0" asp-route-filter="" class="btn btn-secondary">Wszytkie</a>
+                            <a asp-action="Index" id="1" asp-route-filter="Uncompleted" class="btn btn-secondary">Nie wydane</a>
+                            <a asp-action="Index" id="2" asp-route-filter="Completed" class="btn btn-secondary">Wydane</a>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>Klient</th>
+                                <th>Ilość</th>
+                                <th>Cena</th>
+                                <th>Stan</th>
+                                <th>Data zamówienia</th>
+                                <th>Data realizacji</th>
+                                <th>Akcje</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Client.Fullname)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Quantity)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Price)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.State.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.OrderDate)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CompletionDate)
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn-outline-info btn-xs mr-1" onclick="window.location.href = '/Orders/Details/@item.Id'">Szczegóły</button>
+                                            @*<a class="btn-outline-info btn-xs" asp-action="Details" asp-route-id="@item.Id">Details</a>*@
+                                            <form asp-action="Delete" asp-controller="Orders">
+                                                <input value="@item.Id" type="hidden" name="Id"/>
+                                                <button class="btn-outline-danger btn-xs mr-1" type="submit">Usuń</button>
+                                            </form>
+                                            <form asp-action="CompleteOrder" asp-controller="Orders">
+                                                <input value="@item.Id" type="hidden" name="orderId"/>
+                                                <button class="btn-outline-success btn-xs mr-1" type="submit">Zrealizuj</button>
+                                            </form>
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+<script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+    </script>
+</body>

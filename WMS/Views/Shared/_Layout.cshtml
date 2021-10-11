@@ -1,0 +1,81 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WMS</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/menuPanel.css" />
+</head>
+
+<body style="background-color:lightgrey">
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">Produkty</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="ProductTypes" asp-action="Index">Rodzaje Produktów</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="ShoppingCart" asp-action="Index">Koszyk</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">Zamówienia</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Clients" asp-action="Index">Klienci</a>
+                </li>
+                <li>
+                    <a class="nav-link text-dark" href="/AdminPanel/Index">Użytkownicy</a>
+                </li>
+            </ul>
+            <ul>
+                <li class="nav-item" id="Logout">
+                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                        <button type="submit" id="logout-buttom">Logout</button>
+                    </form>
+
+                    @*<a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">Logout</a>*@
+                    @*<form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                            <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
+                        </form>*@
+
+                </li>
+                <li>
+
+                </li>
+            </ul>
+
+        </div>
+
+        <!-- /#sidebar-wrapper -->
+        <!-- Page Content -->
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+
+
+
+    <footer class="border-top footer text-muted">
+        <div class="container" style="position: inherit">
+            &copy; 2021 - WMS wykonał Mateusz Twardzik- <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <!-- /#wrapper -->
+</body>
